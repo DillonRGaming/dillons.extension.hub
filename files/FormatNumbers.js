@@ -3,20 +3,20 @@
   
     class FormatNumbers {
       constructor() {
-        this.useUppercase = false; // Default to lowercase
-        this.decimalPlaces = 1; // Default decimal places
+        this.useUppercase = false;
+        this.decimalPlaces = 1;
       }
   
       formatNumber(args) {
         let num = args.NUM;
-        if (isNaN(num) || num < 1000) return num.toString(); // Return raw number if < 1000
+        if (isNaN(num) || num < 1000) return num.toString();
   
         let suffixes = this.useUppercase ? ['K', 'M', 'B'] : ['k', 'm', 'b'];
         let decimalPlaces = this.decimalPlaces;
   
         function format(value, divisor, suffix) {
           let formatted = (value / divisor).toFixed(decimalPlaces);
-          if (decimalPlaces === 0) formatted = Math.round(value / divisor); // Remove decimal if 0
+          if (decimalPlaces === 0) formatted = Math.round(value / divisor);
           return formatted + suffix;
         }
   
@@ -39,7 +39,7 @@
         return {
           id: "formatNumbers",
           name: "Format Numbers",
-          color1: "#2ECC71", // Green theme
+          color1: "#2ECC71",
           color2: "#27AE60",
           blocks: [
             {
