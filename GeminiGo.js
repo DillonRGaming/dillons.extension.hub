@@ -37,7 +37,7 @@
                     },
                     {
                         opcode: "askGemini",
-                        text: "Ask Gemini (no context) [QUESTION]",
+                        text: "Ask Gemini (No Memory) [QUESTION]",
                         blockType: Scratch.BlockType.REPORTER,
                         arguments: {
                             QUESTION: {
