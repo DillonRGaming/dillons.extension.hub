@@ -35,9 +35,7 @@
         .extensions-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            /* Adjusted minmax width */
             gap: 40px;
-            /* Adjusted gap */
             margin: 0 auto;
             margin-left: 30px;
             margin-right: 30px;
@@ -45,9 +43,7 @@
 
         .extension-card {
             width: 100%;
-            /* Take up the full width of the grid cell */
             padding-bottom: 56.25%;
-            /* 16:9 aspect ratio (9 / 16 * 100) */
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -87,9 +83,7 @@
             align-items: center;
             justify-content: center;
             padding: 10px;
-            /* added padding */
             box-sizing: border-box;
-            /* added box-sizing */
         }
 
         .extension-title {
@@ -105,22 +99,18 @@
             border-radius: 5px;
         }
 
-        /* Dynamic styles will be added here by JavaScript */
+
     </style>
 </head>
-
 <body>
     <div class="header">
         <div class="header-text">
             <h1>Dillon's Extension Hub</h1>
         </div>
     </div>
-
     <hr class="divider" style="margin-top: 20px; margin-bottom: 20px;">
-
     <div class="extensions-grid">
     </div>
-
     <script>
         fetch('cards.json')
             .then(response => response.json())
@@ -145,22 +135,20 @@
                     cardElement.appendChild(imageElement);
                     grid.appendChild(cardElement);
 
-                    // Add dynamic styles for each card
+
                     style.innerHTML += `
                 .${card.id} {
                     background-color: ${card.backgroundColor};
                     border-color: ${card.borderColor};
                 }
             `;
-
-                    // Add click event to trigger file download
                     cardElement.addEventListener('click', () => {
                         if (card.download) {
                             const link = document.createElement('a');
                             link.href = card.download;
-                            link.download = card.download.split('/').pop(); // Extracts filename
+                            link.download = card.download.split('/').pop();
 
-                            // Create and display "Downloaded" message
+    
                             const downloadedMessage = document.createElement('div');
                             downloadedMessage.textContent = 'Downloaded';
                             downloadedMessage.style.position = 'absolute';
@@ -171,7 +159,7 @@
                             downloadedMessage.style.color = 'white';
                             downloadedMessage.style.padding = '10px';
                             downloadedMessage.style.borderRadius = '5px';
-                            downloadedMessage.style.zIndex = '3'; // Ensure it's on top
+                            downloadedMessage.style.zIndex = '3';
                             downloadedMessage.style.opacity = '1';
                             downloadedMessage.style.transition = 'opacity 0.5s ease-in-out';
                             cardElement.appendChild(downloadedMessage);
@@ -180,18 +168,16 @@
                             link.click();
                             document.body.removeChild(link);
 
-                            // Fade out the message after 2 seconds
                             setTimeout(() => {
                                 downloadedMessage.style.opacity = '0';
                                 setTimeout(() => {
                                     cardElement.removeChild(downloadedMessage);
-                                }, 500); // Remove from DOM after fade out
+                                }, 500); 
                             }, 2000);
                         }
 
                     });
                 });
-
                 document.head.appendChild(style);
             });
     </script>
