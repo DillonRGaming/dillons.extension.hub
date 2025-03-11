@@ -9,15 +9,15 @@
     const DEFAULT_API_KEY = "AIzaSyDvvjZyWTeocOIzR96ST6SGpok6_APMVjc";
     let apiKey = DEFAULT_API_KEY;
     let customPrompt = "Be short and concise";
-    let selectedModel = "gemini-2.0-flash"; // Default model
+    let selectedModel = "gemini-2.0-flash";
 
     class GeminiGoExtension {
         getInfo() {
             return {
                 id: "geminiGo",
                 name: "GeminiGo",
-                color1: "#333333", // Dark grey color for extension
-                color2: "#333333", // Dark grey accent color for blocks
+                color1: "#333333",
+                color2: "#333333",
                 blocks: [
                     {
                         opcode: "setApiKey",
