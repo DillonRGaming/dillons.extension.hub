@@ -2,9 +2,17 @@
     {
         "id": "GeminiGo",
         "title": "GeminiGo",
-        "image": "GeminiGo.png",
+        "image": "images/GeminiGo.png",
         "backgroundColor": "#333333",
         "borderColor": "#222222",
-        "download": "GeminiGo.js"
+        "download": "files/GeminiGo.js"
+    },
+    {
+        "id": "FormatNumbers",
+        "title": "FormatNumbers",
+        "image": "images/FormatNumbers.png",
+        "backgroundColor": "#419873",
+        "borderColor": "#317256",
+        "download": "files/FormatNumbers.js"
     }
 ]
