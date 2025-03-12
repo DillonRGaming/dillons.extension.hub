@@ -5,7 +5,7 @@
       getInfo() {
         return {
           id: 'worldData',
-          name: 'World Data',
+          name: 'WorldData',
           color1: '#32479A',
           color2: '#283C80',
           color3: '#1E3166',
