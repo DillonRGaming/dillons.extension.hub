@@ -22,5 +22,13 @@
         "backgroundColor": "#C53131",
         "borderColor": "#B22424",
         "download": "files/Parasite.js"
+    },
+    {
+        "id": "WorldData",
+        "title": "WorldData",
+        "image": "images/WorldData.png",
+        "backgroundColor": "#32479A",
+        "borderColor": "#273C8E",
+        "download": "files/WorldData.js"
     }
 ]
