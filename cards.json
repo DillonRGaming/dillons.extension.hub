@@ -5,7 +5,10 @@
         "image": "images/GeminiGo.png",
         "backgroundColor": "#333333",
         "borderColor": "#222222",
-        "download": "files/GeminiGo.js"
+        "download": "files/GeminiGo.js",
+        "credit": "Dillon",
+        "creditLinks": [],
+        "description": "integration for accessing Google Gemini."
     },
     {
         "id": "FormatNumbers",
@@ -13,15 +16,21 @@
         "image": "images/FormatNumbers.png",
         "backgroundColor": "#419873",
         "borderColor": "#317256",
-        "download": "files/FormatNumbers.js"
+        "download": "files/FormatNumbers.js",
+        "credit": "Dillon, DogeisCut",
+        "creditLinks": [null, "https://github.com/DogeisCut"],
+        "description": "Formats numbers to a readable format."
     },
     {
         "id": "Parasite",
         "title": "Parasite",
         "image": "images/Parasite.png",
         "backgroundColor": "#C53131",
-        "borderColor": "#B22424",
-        "download": "files/Parasite.js"
+        "borderColor": "#B22224",
+        "download": "files/Parasite.js",
+        "credit": "Dillon",
+        "creditLinks": [],
+        "description": "Allows releasing of sprites."
     },
     {
         "id": "WorldData",
@@ -29,6 +38,9 @@
         "image": "images/WorldData.png",
         "backgroundColor": "#32479A",
         "borderColor": "#273C8E",
-        "download": "files/WorldData.js"
+        "download": "files/WorldData.js",
+        "credit": "Dillon",
+        "creditLinks": [],
+        "description": "Outputs global data like population, capital city and more."
     }
 ]

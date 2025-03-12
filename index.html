@@ -2,15 +2,24 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dillon's Extension Hub</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
         :root {
             --accent-color: #00bfff;
+            --background-color: #121212;
+            --text-color: #ffffff;
+            --card-gap: 40px;
+            --card-border-width: 7px;
+            --card-border-radius: 10px;
+            --transition-speed: 0.3s;
         }
 
         body {
-            background-color: #121212;
-            color: white;
+            background-color: var(--background-color);
+            color: var(--text-color);
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 30px;
@@ -32,10 +41,88 @@
             margin-bottom: 10px;
         }
 
+        .divider {
+            margin: 20px 0;
+            border: 0;
+            border-top: 1px solid #333;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            display: flex;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid #333;
+            border-radius: 25px;
+            background-color: #1e1e1e;
+            color: var(--text-color);
+            font-size: 16px;
+            transition: border-color var(--transition-speed) ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            cursor: pointer;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 45px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .clear-search.visible {
+            opacity: 1;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            font-size: 1.2em;
+            color: #aaa;
+            display: none;
+        }
+
+        #loading-indicator {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2em;
+        }
+
+        #error-message {
+            display: none;
+            text-align: center;
+            color: #ff6b6b;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #ff6b6b;
+            border-radius: 5px;
+        }
+
         .extensions-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 40px;
+            gap: var(--card-gap);
             margin: 0 auto;
             margin-left: 30px;
             margin-right: 30px;
@@ -44,10 +131,7 @@
         .extension-card {
             width: 100%;
             padding-bottom: 56.25%;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: var(--card-border-radius);
             position: relative;
             overflow: hidden;
             cursor: pointer;
@@ -55,25 +139,33 @@
             font-weight: bold;
             font-size: 20px;
             text-align: center;
-            border: 7px solid;
-            transition: transform 0.3s ease;
+            border: var(--card-border-width) solid;
+            transition: transform var(--transition-speed) ease;
         }
 
-        .extension-card:hover {
+        .extension-card:hover,
+        .extension-card:focus {
             transform: scale(1.03);
+            outline: none;
         }
 
-        .extension-card:hover .extension-image {
+        .extension-card:hover .extension-image,
+        .extension-card:focus .extension-image {
             opacity: 0.5;
             filter: blur(3px);
         }
 
-        .extension-card:hover .extension-title {
+        .extension-card:hover .extension-title,
+        .extension-card:focus .extension-title {
             opacity: 1;
         }
 
+        .extension-card:hover .extension-credit,
+        .extension-card:focus .extension-credit {
+            opacity: 1;
+        }
 
-        .extension-card>* {
+        .extension-card > * {
             position: absolute;
             top: 0;
             left: 0;
@@ -86,100 +178,486 @@
             box-sizing: border-box;
         }
 
+        .extension-card > .extension-credit {
+            height: auto;
+            align-items: end;
+            top: auto;
+            bottom: 10px;
+            padding: 5px;
+            overflow: hidden;
+            letter-spacing: 1px;
+            word-break: break-word;
+        }
+
         .extension-title {
             opacity: 0;
-            transition: opacity 0.3s ease-in-out;
+            transition: opacity var(--transition-speed) ease-in-out;
             z-index: 2;
             font-size: 1.5em;
+            text-align: center;
         }
+
+        .extension-card.description-active .extension-title {
+            opacity: 0 !important;
+        }
+
 
         .extension-image {
             z-index: 1;
-            transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
+            transition: opacity var(--transition-speed) ease-in-out, filter var(--transition-speed) ease-in-out;
             border-radius: 5px;
+            object-fit: cover;
         }
 
+        .extension-credit {
+            font-size: 0.65em;
+            fontc-weight: bold;
+            z-index: 3;
+            opacity: 0;
+            box-sizing: border-box;
+            border-radius: 5px;
+            transition: opacity var(--transition-speed) ease-in-out;
+            text-align: center;
+            overflow: hidden;
+            padding: 10px;
+            word-wrap: break-word;
+        }
 
+        .extension-credit a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .description-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            color: var(--text-color);
+            font-size: 1em;
+            text-align: center;
+            line-height: 28px;
+            cursor: pointer;
+            z-index: 4;
+            opacity: 0;
+            transition: opacity var(--transition-speed) ease-in-out;
+        }
+
+        .extension-card:hover .description-button,
+        .extension-card:focus .description-button {
+            opacity: 1;
+        }
+
+        .description-text {
+            font-size: 0.7em;
+            opacity: 0;
+            transition: opacity var(--transition-speed) ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            box-sizing: border-box;
+            text-align: center;
+            word-wrap: break-word;
+            z-index: 2;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .description-text.active {
+            opacity: 1;
+        }
+
+        .download-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-speed) ease-in-out;
+        }
+
+        .download-indicator.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .download-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .download-text {
+            margin-top: 10px;
+            color: white;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .extensions-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                margin-left: 15px;
+                margin-right: 15px;
+                gap: 20px;
+            }
+
+            body {
+                padding: 15px;
+            }
+
+            .search-container {
+                max-width: 90%;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="header">
         <div class="header-text">
             <h1>Dillon's Extension Hub</h1>
         </div>
     </div>
-    <hr class="divider" style="margin-top: 20px; margin-bottom: 20px;">
-    <div class="extensions-grid">
+
+    <div class="search-container">
+        <input type="text" class="search-input" id="search-input" placeholder="Search extensions..."
+            aria-label="Search extensions">
+        <span class="clear-search material-icons" id="clear-search" role="button" tabindex="0"
+            aria-label="Clear search">close</span>
+        <span class="search-icon material-icons">search</span>
     </div>
+
+    <hr class="divider" style="margin-top: 20px; margin-bottom: 20px;">
+
+    <div id="loading-indicator">Loading extensions...</div>
+    <div id="error-message">Failed to load extensions. Please try again later.</div>
+    <div class="no-results" id="no-results">No extensions found matching your search.</div>
+
+    <div class="extensions-grid"></div>
+
     <script>
-        fetch('cards.json')
-            .then(response => response.json())
-            .then(cards => {
-                const grid = document.querySelector('.extensions-grid');
-                let style = document.createElement('style');
+        const grid = document.querySelector('.extensions-grid');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const errorMessage = document.getElementById('error-message');
+        const noResults = document.getElementById('no-results');
+        const searchInput = document.getElementById('search-input');
+        const clearSearch = document.getElementById('clear-search');
+        const styleElement = document.createElement('style');
+        document.head.appendChild(styleElement);
 
-                cards.forEach(card => {
-                    const cardElement = document.createElement('div');
-                    cardElement.classList.add('extension-card', card.id);
+        let cardsData = [];
+        const CARDS_URL = 'cards.json';
 
-                    const titleElement = document.createElement('div');
-                    titleElement.classList.add('extension-title');
-                    titleElement.innerHTML = card.title;
-
-                    const imageElement = document.createElement('img');
-                    imageElement.classList.add('extension-image');
-                    imageElement.src = card.image;
-                    imageElement.alt = card.title;
-
-                    cardElement.appendChild(titleElement);
-                    cardElement.appendChild(imageElement);
-                    grid.appendChild(cardElement);
-
-
-                    style.innerHTML += `
-                .${card.id} {
-                    background-color: ${card.backgroundColor};
-                    border-color: ${card.borderColor};
+        function createElement(tag, classes, attributes = {}) {
+            const element = document.createElement(tag);
+            if (classes) {
+                if (Array.isArray(classes)) {
+                    classes.forEach(cls => element.classList.add(cls));
+                } else {
+                    element.classList.add(classes);
                 }
-            `;
-                    cardElement.addEventListener('click', () => {
-                        if (card.download) {
-                            const link = document.createElement('a');
-                            link.href = card.download;
-                            link.download = card.download.split('/').pop();
+            }
 
-    
-                            const downloadedMessage = document.createElement('div');
-                            downloadedMessage.textContent = 'Downloaded';
-                            downloadedMessage.style.position = 'absolute';
-                            downloadedMessage.style.top = '50%';
-                            downloadedMessage.style.left = '50%';
-                            downloadedMessage.style.transform = 'translate(-50%, -50%)';
-                            downloadedMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-                            downloadedMessage.style.color = 'white';
-                            downloadedMessage.style.padding = '10px';
-                            downloadedMessage.style.borderRadius = '5px';
-                            downloadedMessage.style.zIndex = '3';
-                            downloadedMessage.style.opacity = '1';
-                            downloadedMessage.style.transition = 'opacity 0.5s ease-in-out';
-                            cardElement.appendChild(downloadedMessage);
-
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-
-                            setTimeout(() => {
-                                downloadedMessage.style.opacity = '0';
-                                setTimeout(() => {
-                                    cardElement.removeChild(downloadedMessage);
-                                }, 500); 
-                            }, 2000);
-                        }
-
-                    });
-                });
-                document.head.appendChild(style);
+            Object.entries(attributes).forEach(([key, value]) => {
+                element.setAttribute(key, value);
             });
+
+            return element;
+        }
+
+        function setupSearch() {
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.trim().toLowerCase();
+                filterCards(query);
+                clearSearch.classList.toggle('visible', query.length > 0);
+            });
+
+            clearSearch.addEventListener('click', () => {
+                searchInput.value = '';
+                clearSearch.classList.remove('visible');
+                filterCards('');
+                searchInput.focus();
+            });
+
+            clearSearch.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    searchInput.value = '';
+                    clearSearch.classList.remove('visible');
+                    filterCards('');
+                    searchInput.focus();
+                }
+            });
+        }
+
+        function filterCards(query) {
+            if (!cardsData || cardsData.length === 0) return;
+
+            grid.innerHTML = '';
+            let visibleCards = 0;
+
+            cardsData.forEach(card => {
+                if (!query ||
+                    card.title.toLowerCase().includes(query) ||
+                    (card.description && card.description.toLowerCase().includes(query))) {
+                    createCard(card);
+                    visibleCards++;
+                }
+            });
+
+            noResults.style.display = visibleCards === 0 ? 'block' : 'none';
+        }
+
+        function createCard(card) {
+            if (!card.id || !card.title) {
+                console.warn('Card missing required fields:', card);
+                return null;
+            }
+
+            const cardElement = createElement('div', ['extension-card', card.id], {
+                tabindex: '0',
+                role: 'button',
+                'aria-label': `${card.title}. Click for more information or to download.`
+            });
+
+            const titleElement = createElement('div', 'extension-title');
+            titleElement.textContent = card.title;
+
+            const imageElement = createElement('img', 'extension-image', {
+                src: card.image || 'placeholder.jpg',
+                alt: card.title,
+                loading: 'lazy'
+            });
+
+            const creditElement = createElement('div', 'extension-credit');
+            if (card.credit) {
+                createCreditContent(creditElement, card);
+            }
+
+            const descriptionButton = createElement('div', 'description-button', {
+                role: 'button',
+                tabindex: '0',
+                'aria-label': 'Show description'
+            });
+            descriptionButton.innerHTML = '<i class="material-icons" style="font-size: 1.3em;">info_outline</i>';
+
+            const descriptionTextElement = createElement('div', 'description-text');
+            descriptionTextElement.textContent = card.description || 'No description available';
+
+            const downloadIndicator = createElement('div', 'download-indicator');
+            const downloadSpinner = createElement('div', 'download-spinner');
+            const downloadText = createElement('div', 'download-text');
+            downloadText.textContent = 'Downloading...';
+            downloadIndicator.appendChild(downloadSpinner);
+            downloadIndicator.appendChild(downloadText);
+
+            cardElement.appendChild(titleElement);
+            cardElement.appendChild(imageElement);
+            cardElement.appendChild(descriptionTextElement);
+            cardElement.appendChild(descriptionButton);
+            cardElement.appendChild(downloadIndicator);
+
+            if (card.credit) {
+                cardElement.appendChild(creditElement);
+            }
+
+            grid.appendChild(cardElement);
+
+            addCardStyle(card);
+            setupCardEventListeners(cardElement, descriptionButton, descriptionTextElement, downloadIndicator, card);
+
+            return cardElement;
+        }
+
+        function createCreditContent(creditElement, card) {
+            const credits = card.credit.split(', ');
+            let creditHTML = 'By: ';
+
+            credits.forEach((credit, index) => {
+                const link = card.creditLinks && card.creditLinks[index] ? card.creditLinks[index] : null;
+                creditHTML += link
+                    ? `<span style="margin: 0 4px;"><a href="${sanitizeUrl(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(credit)}</a></span>`
+                    : `<span style="margin: 0 4px;">${escapeHtml(credit)}</span>`;
+                if (index < credits.length - 1) creditHTML += ' and ';
+            });
+
+            creditElement.innerHTML = creditHTML;
+
+            creditElement.querySelectorAll('a').forEach(linkElement => {
+                linkElement.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                });
+            });
+        }
+
+        function addCardStyle(card) {
+            const backgroundColor = validateColor(card.backgroundColor) || '#333333';
+            const borderColor = validateColor(card.borderColor) || '#555555';
+            styleElement.textContent += `.${card.id} { background-color: ${backgroundColor}; border-color: ${borderColor}; }`;
+        }
+
+        function setupCardEventListeners(cardElement, descriptionButton, descriptionTextElement, downloadIndicator, card) {
+            let isDescriptionActive = false;
+
+            const deactivateDescription = () => {
+                if (isDescriptionActive) {
+                  descriptionTextElement.classList.remove('active');
+                  cardElement.classList.remove('description-active');
+                  isDescriptionActive = false;
+                }
+            }
+
+            cardElement.addEventListener('mouseleave', deactivateDescription);
+
+            cardElement.addEventListener('click', (event) => {
+                if (event.target.closest('a')) return;
+                if (event.target === descriptionButton) return;
+                if (card.download) {
+                    showDownloadIndicator(downloadIndicator);
+                    downloadFile(card.download, downloadIndicator);
+                }
+            });
+
+            cardElement.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    if (event.target.closest('a')) return;
+                    if (event.target === descriptionButton) return;
+                    if (card.download) {
+                        showDownloadIndicator(downloadIndicator);
+                        downloadFile(card.download, downloadIndicator);
+                    }
+                }
+            });
+
+            descriptionButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                isDescriptionActive = !isDescriptionActive;
+
+                if (isDescriptionActive && card.description) {
+                    descriptionTextElement.classList.add('active');
+                    cardElement.classList.add('description-active');
+                } else {
+                    descriptionTextElement.classList.remove('active');
+                    cardElement.classList.remove('description-active');
+                }
+            });
+
+            descriptionButton.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    isDescriptionActive = !isDescriptionActive;
+
+                    if (isDescriptionActive && card.description) {
+                        descriptionTextElement.classList.add('active');
+                        cardElement.classList.add('description-active');
+                    } else {
+                        descriptionTextElement.classList.remove('active');
+                        cardElement.classList.remove('description-active');
+                    }
+                }
+            });
+        }
+
+        function showDownloadIndicator(indicator) {
+            indicator.classList.add('active');
+            setTimeout(() => indicator.classList.remove('active'), 2000);
+        }
+
+        function downloadFile(url, indicator) {
+            try {
+                const link = createElement('a', null, {
+                    href: sanitizeUrl(url),
+                    download: url.split('/').pop()
+                });
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => indicator.classList.remove('active'), 1000 + Math.random() * 1000);
+            } catch (error) {
+                console.error('Download failed:', error);
+                indicator.classList.remove('active');
+            }
+        }
+
+        function sanitizeUrl(url) {
+            const sanitized = url.trim();
+            return sanitized.startsWith('javascript:') ? '#' : sanitized;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function validateColor(color) {
+            if (!color) return null;
+            const hexRegex = /^#([0-9A-F]{3}){1,2}$/i;
+            const rgbRegex = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/;
+            const rgbaRegex = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/;
+            const namedColors = ['black', 'silver', 'gray', 'white', 'maroon', 'red', 'purple', 'fuchsia',
+                'green', 'lime', 'olive', 'yellow', 'navy', 'blue', 'teal', 'aqua'];
+            return (hexRegex.test(color) || rgbRegex.test(color) || rgbaRegex.test(color) ||
+                namedColors.includes(color.toLowerCase())) ? color : null;
+        }
+
+        async function loadCardData() {
+            try {
+                const response = await fetch(CARDS_URL);
+                if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+                const cards = await response.json();
+                if (!Array.isArray(cards)) throw new Error('Invalid data format');
+                return cards;
+            } catch (error) {
+                console.error('Failed to load cards:', error);
+                throw error;
+            }
+        }
+
+        async function initApp() {
+            try {
+                cardsData = await loadCardData();
+                loadingIndicator.style.display = 'none';
+                if (cardsData.length === 0) {
+                    grid.innerHTML = '<p>No extensions available.</p>';
+                    return;
+                }
+                setupSearch();
+                filterCards('');
+            } catch (error) {
+                loadingIndicator.style.display = 'none';
+                errorMessage.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 
