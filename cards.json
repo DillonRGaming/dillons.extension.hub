@@ -14,5 +14,13 @@
         "backgroundColor": "#419873",
         "borderColor": "#317256",
         "download": "files/FormatNumbers.js"
+    },
+    {
+        "id": "Parasite",
+        "title": "Parasite",
+        "image": "images/Parasite.png",
+        "backgroundColor": "#C53131",
+        "borderColor": "#B22424",
+        "download": "files/Parasite.js"
     }
 ]
