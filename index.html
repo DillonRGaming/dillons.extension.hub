@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dillon's Extension Hub</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --accent-color: #00bfff;
@@ -13,14 +16,14 @@
             --text-color: #ffffff;
             --card-gap: 40px;
             --card-border-width: 7px;
-            --card-border-radius: 10px;
-            --transition-speed: 0.3s;
+            --card-border-radius: 20px;
+            --transition-speed: 0.15s;
         }
 
         body {
             background-color: var(--background-color);
             color: var(--text-color);
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 30px;
         }
@@ -140,29 +143,78 @@
             font-size: 20px;
             text-align: center;
             border: var(--card-border-width) solid;
-            transition: transform var(--transition-speed) ease;
+            transition: opacity var(--transition-speed) ease-out, filter var(--transition-speed) ease-out;
         }
 
         .extension-card:hover,
         .extension-card:focus {
             transform: scale(1.03);
             outline: none;
+            transition: transform var(--transition-speed) ease-out;
         }
 
         .extension-card:hover .extension-image,
         .extension-card:focus .extension-image {
             opacity: 0.5;
             filter: blur(3px);
+            transition-duration: var(--transition-speed);
+            transition-timing-function: ease-out;
         }
 
         .extension-card:hover .extension-title,
         .extension-card:focus .extension-title {
             opacity: 1;
+            transition-delay: 0.05s;
+            transition-duration: var(--transition-speed);
+            transition-timing-function: ease-out;
         }
 
         .extension-card:hover .extension-credit,
         .extension-card:focus .extension-credit {
             opacity: 1;
+            transition-delay: 0.05s;
+            transition-duration: var(--transition-speed);
+            transition-timing-function: ease-out;
+        }
+
+        .extension-card:hover .extension-badge {
+            opacity: 0;
+            transition-duration: var(--transition-speed);
+            transition-timing-function: ease-out;
+        }
+
+        .extension-card.removed {
+            opacity: 0.7;
+            cursor: default;
+            pointer-events: none;
+            transition: opacity var(--transition-speed) ease-in-out, filter var(--transition-speed) ease-in-out;
+            z-index: 1; /* Ensure removed card is above default content but below badge */
+        }
+
+        .extension-card.removed:hover,
+        .extension-card.removed:focus {
+            transform: none;
+            outline: none;
+            transition: none;
+        }
+
+        .extension-card.removed:hover .extension-image,
+        .extension-card.removed:focus .extension-image {
+            opacity: 1;
+            filter: none;
+            transition: none;
+        }
+
+        .extension-card.removed:hover .extension-title,
+        .extension-card.removed:focus .extension-title {
+            opacity: 0;
+            transition: none;
+        }
+
+        .extension-card.removed:hover .extension-credit,
+        .extension-card.removed:focus .extension-credit {
+            opacity: 0;
+            transition: none;
         }
 
         .extension-card > * {
@@ -191,7 +243,7 @@
 
         .extension-title {
             opacity: 0;
-            transition: opacity var(--transition-speed) ease-in-out;
+            transition: opacity var(--transition-speed) ease-out;
             z-index: 2;
             font-size: 1.5em;
             text-align: center;
@@ -204,19 +256,19 @@
 
         .extension-image {
             z-index: 1;
-            transition: opacity var(--transition-speed) ease-in-out, filter var(--transition-speed) ease-in-out;
-            border-radius: 5px;
+            border-radius: 10px;
             object-fit: cover;
+            transition: opacity var(--transition-speed) ease-out, filter var(--transition-speed) ease-out;
         }
 
         .extension-credit {
             font-size: 0.65em;
-            fontc-weight: bold;
+            font-weight: bold;
             z-index: 3;
             opacity: 0;
+            transition: opacity var(--transition-speed) ease-out;
             box-sizing: border-box;
             border-radius: 5px;
-            transition: opacity var(--transition-speed) ease-in-out;
             text-align: center;
             overflow: hidden;
             padding: 10px;
@@ -226,6 +278,10 @@
         .extension-credit a {
             color: var(--accent-color);
             text-decoration: none;
+            text-shadow: -1px -1px 0 #0000FF,
+                         1px -1px 0 #0000FF,
+                         -1px 1px 0 #0000FF,
+                         1px 1px 0 #0000FF;
         }
 
         .description-button {
@@ -242,18 +298,20 @@
             cursor: pointer;
             z-index: 4;
             opacity: 0;
-            transition: opacity var(--transition-speed) ease-in-out;
+            transition: opacity var(--transition-speed) ease-out;
         }
 
         .extension-card:hover .description-button,
         .extension-card:focus .description-button {
             opacity: 1;
+            transition-duration: var(--transition-speed);
+            transition-timing-function: ease-out;
         }
 
         .description-text {
             font-size: 0.7em;
             opacity: 0;
-            transition: opacity var(--transition-speed) ease-in-out;
+            transition: opacity var(--transition-speed) ease-out;
             position: absolute;
             top: 0;
             left: 0;
@@ -333,6 +391,60 @@
             .search-container {
                 max-width: 90%;
             }
+        }
+
+        .extension-badge {
+            background-color: #747474;
+            border-color: #3c3c3c;
+            margin-left: auto;
+            width: 90px;
+            height: 25px;
+            line-height: 25px;
+            position: absolute;
+            inset-block-start: 10px;
+            inset-inline-end: 10px;
+            padding: 0 8px;
+            border-radius: 5px;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            z-index: 1000; /* Increased z-index to 1000 */
+            pointer-events: none;
+            text-align: center;
+            transition: opacity var(--transition-speed) ease-out;
+            border-width: 2px;
+            border-style: solid;
+        }
+
+        .new-badge {
+            background-color: #29ABE2;
+            border-color: #2286B3;
+        }
+
+        .updated-badge {
+            background-color: #28a745;
+            border-color: #1e7e34;
+        }
+
+        .removed-badge {
+            background-color: #dc3545;
+            border-color: #b02a37;
+        }
+
+        .unstable-badge {
+            background-color: #ffda6b;
+            color: black;
+            border-color: #d39e00;
+        }
+
+        /*  Ensure removed badge is above the dark tint and add blur to removed extensions */
+        .extension-card.removed .extension-badge {
+            z-index: 2;
+        }
+
+        .extension-card.removed .extension-image {
+            filter: blur(5px); /* Apply a blur effect to the image of removed extensions */
         }
     </style>
 </head>
@@ -486,6 +598,16 @@
                 cardElement.appendChild(creditElement);
             }
 
+            if (card.badge) {
+                const badgeElement = createElement('div', ['extension-badge', `${card.badge.toLowerCase()}-badge`]);
+                badgeElement.innerHTML = card.badge + (card.badge.toLowerCase() === 'unstable' ? ' <i class="material-icons" style="font-size: 0.9rem; vertical-align: middle; position: relative; top: -1px; margin-left: 3px;">warning</i>' : '');
+                cardElement.appendChild(badgeElement);
+                if (card.badge.toLowerCase() === 'removed') {
+                    cardElement.classList.add('removed');
+                    cardElement.setAttribute('aria-label', `${card.title}. This extension is no longer available.`);
+                }
+            }
+
             grid.appendChild(cardElement);
 
             addCardStyle(card);
@@ -526,34 +648,37 @@
 
             const deactivateDescription = () => {
                 if (isDescriptionActive) {
-                  descriptionTextElement.classList.remove('active');
-                  cardElement.classList.remove('description-active');
-                  isDescriptionActive = false;
+                    descriptionTextElement.classList.remove('active');
+                    cardElement.classList.remove('description-active');
+                    isDescriptionActive = false;
                 }
             }
 
             cardElement.addEventListener('mouseleave', deactivateDescription);
 
-            cardElement.addEventListener('click', (event) => {
-                if (event.target.closest('a')) return;
-                if (event.target === descriptionButton) return;
-                if (card.download) {
-                    showDownloadIndicator(downloadIndicator);
-                    downloadFile(card.download, downloadIndicator);
-                }
-            });
-
-            cardElement.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
+            if (card.badge?.toLowerCase() !== 'removed') {
+                cardElement.addEventListener('click', (event) => {
                     if (event.target.closest('a')) return;
                     if (event.target === descriptionButton) return;
                     if (card.download) {
                         showDownloadIndicator(downloadIndicator);
-                        downloadFile(card.download, downloadIndicator);
+                        downloadFile(card.download, indicator);
                     }
-                }
-            });
+                });
+
+                cardElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        if (event.target.closest('a')) return;
+                        if (event.target === descriptionButton) return;
+                        if (card.download) {
+                            showDownloadIndicator(downloadIndicator);
+                            downloadFile(card.download, indicator);
+                        }
+                    }
+                });
+            }
+
 
             descriptionButton.addEventListener('click', (event) => {
                 event.stopPropagation();

@@ -8,18 +8,20 @@
         "download": "files/GeminiGo.js",
         "credit": "Dillon",
         "creditLinks": [],
-        "description": "integration for accessing Google Gemini."
+        "description": "integration for accessing Google Gemini.",
+        "badge": null
     },
     {
         "id": "FormatNumbers",
         "title": "FormatNumbers",
         "image": "images/FormatNumbers.png",
-        "backgroundColor": "#419873",
-        "borderColor": "#317256",
+        "backgroundColor": "#8E4198",
+        "borderColor": "#703079",
         "download": "files/FormatNumbers.js",
-        "credit": "Dillon, DogeisCut",
-        "creditLinks": [null, "https://github.com/DogeisCut"],
-        "description": "Formats numbers to a readable format."
+        "credit": "DogeisCut, Dillon",
+        "creditLinks": ["https://github.com/DogeisCut", null],
+        "description": "Formats numbers to a readable format.",
+        "badge": "Updated"
     },
     {
         "id": "Parasite",
@@ -30,7 +32,8 @@
         "download": "files/Parasite.js",
         "credit": "Dillon",
         "creditLinks": [],
-        "description": "Allows releasing of sprites."
+        "description": "Allows releasing of sprites.",
+        "badge": "Unstable"
     },
     {
         "id": "WorldData",
@@ -42,5 +45,17 @@
         "credit": "Dillon",
         "creditLinks": [],
         "description": "Outputs global data like population, capital city and more."
+    },
+    {
+        "id": "PangStats",
+        "title": "PangStats",
+        "image": "images/PangStats.png",
+        "backgroundColor": "#4286f4",
+        "borderColor": "#3569c4",
+        "download": "files/PangStats.js",
+        "credit": "Dillon",
+        "creditLinks": [],
+        "description": "Displays FPS, CPU usage, and frame time.",
+        "badge": "New"
     }
 ]

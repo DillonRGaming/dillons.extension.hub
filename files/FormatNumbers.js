@@ -115,9 +115,9 @@
     getInfo() {
       return {
         id: "formatNumbers",
-        name: "Format Numbers",
-        color1: "#2ECC71",
-        color2: "#27AE60",
+        name: "FormatNumbers",
+        color1: "#8E4198",
+        color2: "#703079",
         blocks: [
           {
             opcode: "formatNumber",
