@@ -21,7 +21,7 @@
         "credit": "DogeisCut, Dillon",
         "creditLinks": ["https://github.com/DogeisCut", null],
         "description": "Formats numbers to a readable format.",
-        "badge": "Updated"
+        "badge": null
     },
     {
         "id": "Parasite",
@@ -44,7 +44,8 @@
         "download": "files/WorldData.js",
         "credit": "Dillon",
         "creditLinks": [],
-        "description": "Outputs global data like population, capital city and more."
+        "description": "Outputs global data like population, capital city and more.",
+        "badge": null
     },
     {
         "id": "PangStats",
@@ -56,6 +57,18 @@
         "credit": "Dillon",
         "creditLinks": [],
         "description": "Displays FPS, CPU usage, and frame time.",
+        "badge": null
+    },
+    {
+        "id": "WebBlocks",
+        "title": "WebBlocks",
+        "image": "images/WebBlocks.png",
+        "backgroundColor": "#36454F",
+        "borderColor": "#28333A",
+        "download": "files/WebBlocks.js",
+        "credit": "Dillon",
+        "creditLinks": [],
+        "description": "Allows running HTML, CSS, and JS.",
         "badge": "New"
     }
 ]

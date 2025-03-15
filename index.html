@@ -123,7 +123,8 @@
         }
 
         .extensions-grid {
-            display: grid;            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: var(--card-gap);
             margin: 0 auto;
             margin-left: 30px;
@@ -164,7 +165,7 @@
         .extension-card:focus .extension-title {
             opacity: 1;
             transition-delay: 0.05s;
-            transition-duration: var(--transition-speed);
+            transition-duration: var(--transition-speed) ease-out;
             transition-timing-function: ease-out;
         }
 
@@ -172,7 +173,7 @@
         .extension-card:focus .extension-credit {
             opacity: 1;
             transition-delay: 0.05s;
-            transition-duration: var(--transition-speed);
+            transition-duration: var(--transition-speed) ease-out;
             transition-timing-function: ease-out;
         }
 
@@ -216,7 +217,7 @@
             transition: none;
         }
 
-        .extension-card > * {
+        .extension-card > *:not(.badges-container, .description-button) {
             position: absolute;
             top: 0;
             left: 0;
@@ -272,6 +273,9 @@
             overflow: hidden;
             padding: 10px;
             word-wrap: break-word;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .extension-credit a {
@@ -395,25 +399,20 @@
         .extension-badge {
             background-color: #747474;
             border-color: #3c3c3c;
-            margin-left: auto;
             width: 90px;
             height: 25px;
             line-height: 25px;
-            position: absolute;
-            inset-block-start: 10px;
-            inset-inline-end: 10px;
             padding: 0 8px;
             border-radius: 5px;
             color: white;
             font-size: 0.7rem;
             font-weight: bold;
             text-transform: uppercase;
-            z-index: 1000;
-            pointer-events: none;
             text-align: center;
             transition: opacity var(--transition-speed) ease-out;
             border-width: 2px;
             border-style: solid;
+
         }
 
         .new-badge {
@@ -437,6 +436,19 @@
             border-color: #d39e00;
         }
 
+        /* Container for badges, positioned at the top right of the card, allows multiple badges */
+        .badges-container {
+            position: absolute;
+            top: 10px;
+            /* Adjusted top to 10px to give some space from the card border */
+            right: 10px;
+            /* Adjusted right to 10px to give some space from the card border */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+            z-index: 5;
+        }
 
         .extension-card.removed .extension-badge {
             z-index: 2;
@@ -444,6 +456,21 @@
 
         .extension-card.removed .extension-image {
             filter: blur(5px);
+        }
+
+        .credit-name {
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .credit-separator {
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .by-label {
+            white-space: nowrap;
+            display: inline-block;
         }
     </style>
 </head>
@@ -597,30 +624,23 @@
                 cardElement.appendChild(creditElement);
             }
 
-            if (card.badge) {
-                const badgeElement = createElement('div', ['extension-badge', `${card.badge.toLowerCase()}-badge`]);
-                let badgeIcon = '';
-                switch (card.badge.toLowerCase()) {
-                    case 'new':
-                        badgeIcon = '<i class="material-icons" style="font-size: 0.9rem; vertical-align: middle; position: relative; top: -1px; margin-left: 3px;">stars</i>';
-                        break;
-                    case 'updated':
-                        badgeIcon = '<i class="material-icons" style="font-size: 0.9rem; vertical-align: middle; position: relative; top: -1px; margin-left: 3px;">refresh</i>';
-                        break;
-                    case 'removed':
-                        badgeIcon = '<i class="material-icons" style="font-size: 0.9rem; vertical-align: middle; position: relative; top: -1px; margin-left: 3px;">clear</i>';
-                        break;
-                    case 'unstable':
-                        badgeIcon = '<i class="material-icons" style="font-size: 0.9rem; vertical-align: middle; position: relative; top: -1px; margin-left: 3px;">report_problem</i>';
-                        break;
-                }
-                badgeElement.innerHTML = card.badge + badgeIcon;
-                cardElement.appendChild(badgeElement);
-                if (card.badge.toLowerCase() === 'removed') {
+            const badgesContainer = createElement('div', 'badges-container');
+            // Ensure badges is always an array
+            const badges = Array.isArray(card.badges) ? card.badges : card.badge ? [card.badge] : [];
+
+            badges.forEach(badge => {
+                const badgeElement = createElement('div', ['extension-badge', `${badge.toLowerCase()}-badge`]);
+                let badgeIcon = getBadgeIcon(badge);
+                badgeElement.innerHTML = badge + badgeIcon;
+                badgesContainer.appendChild(badgeElement);
+
+                if (badge.toLowerCase() === 'removed') {
                     cardElement.classList.add('removed');
                     cardElement.setAttribute('aria-label', `${card.title}. This extension is no longer available.`);
                 }
-            }
+            });
+
+            cardElement.appendChild(badgesContainer);
 
             grid.appendChild(cardElement);
 
@@ -632,14 +652,14 @@
 
         function createCreditContent(creditElement, card) {
             const credits = card.credit.split(', ');
-            let creditHTML = 'By: ';
+            let creditHTML = '<span class="by-label">By: </span>';
 
             credits.forEach((credit, index) => {
                 const link = card.creditLinks && card.creditLinks[index] ? card.creditLinks[index] : null;
                 creditHTML += link
-                    ? `<span style="margin: 0 4px;"><a href="${sanitizeUrl(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(credit)}</a></span>`
-                    : `<span style="margin: 0 4px;">${escapeHtml(credit)}</span>`;
-                if (index < credits.length - 1) creditHTML += ' and ';
+                    ? `<span class="credit-name" style="margin: 0 4px;"><a href="${sanitizeUrl(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(credit)}</a></span>`
+                    : `<span class="credit-name" style="margin: 0 4px;">${escapeHtml(credit)}</span>`;
+                if (index < credits.length - 1) creditHTML += '<span class="credit-separator"> and </span>';
             });
 
             creditElement.innerHTML = creditHTML;
@@ -676,7 +696,7 @@
                     if (event.target === descriptionButton) return;
                     if (card.download) {
                         showDownloadIndicator(downloadIndicator);
-                        downloadFile(card.download, downloadIndicator);
+                        downloadFile(card.download, indicator);
                     }
                 });
 
@@ -778,6 +798,25 @@
                 console.error('Failed to load cards:', error);
                 throw error;
             }
+        }
+
+        function getBadgeIcon(badge) {
+            let badgeIcon = '';
+            switch (badge.toLowerCase()) {
+                case 'new':
+                    badgeIcon = '<i class="material-icons" style="font-size: 0.9rem; vertical-align: middle; position: relative; top: -1px; margin-left: 3px;">stars</i>';
+                    break;
+                case 'updated':
+                    badgeIcon = '<i class="material-icons" style="font-size: 0.9rem; vertical-align: middle; position: relative; top: -1px; margin-left: 3px;">refresh</i>';
+                    break;
+                case 'removed':
+                    badgeIcon = '<i class="material-icons" style="font-size: 0.9rem; vertical-align: middle; position: relative; top: -1px; margin-left: 3px;">clear</i>';
+                    break;
+                case 'unstable':
+                    badgeIcon = '<i class="material-icons" style="font-size: 0.9rem; vertical-align: middle; position: relative; top: -1px; margin-left: 3px;">report_problem</i>';
+                    break;
+            }
+            return badgeIcon;
         }
 
         async function initApp() {
