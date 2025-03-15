@@ -34,7 +34,7 @@
         "creditLinks": [null],
         "description": "Allows releasing of sprites.",
         "hoverColor": "#E55557",
-        "badge": ["unstable"]
+        "badge": ["unstable", "updated"]
     },
     {
         "id": "WorldData",

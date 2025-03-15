@@ -1,23 +1,23 @@
 {
     "new": {
       "backgroundColor": "#4FC3F7",
-      "borderColor": "#29B6F6",
+      "borderColor": "#2979B2",
       "icon": "stars"
     },
     "updated": {
       "backgroundColor": "#28a745",
-      "borderColor": "#1e7e34",
+      "borderColor": "#1E7E34",
       "icon": "refresh"
     },
     "unstable": {
       "backgroundColor": "#ffda6b",
       "color": "black",
-      "borderColor": "#d39e00",
+      "borderColor": "#c49100",
       "icon": "report_problem"
     },
     "beta": {
       "backgroundColor": "#ffa000",
-      "borderColor": "#ff8f00",
+      "borderColor": "#b36a00",
       "icon": "warning"
     }
   }

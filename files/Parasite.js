@@ -32,12 +32,44 @@
                 defaultValue: 'Sprite1'
               }
             }
+          },
+          {
+            opcode: 'setCloneOnBounce',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'clone on bounce [TOGGLE]',
+            arguments: {
+              TOGGLE: {
+                type: Scratch.ArgumentType.STRING,
+                menu: 'toggleMenu',
+                defaultValue: 'on'
+              }
+            }
+          },
+          {
+            opcode: 'setParasiteSpeed',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'set parasite speed to [SPEED]',
+            arguments: {
+              SPEED: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 2
+              }
+            }
+          },
+          {
+            opcode: 'cageAllSpritesButton',
+            blockType: Scratch.BlockType.BUTTON,
+            text: 'cage all sprites'
           }
         ],
         menus: {
           spriteMenu: {
             acceptReporters: true,
             items: 'getSprites'
+          },
+          toggleMenu: {
+            acceptReporters: false,
+            items: ['on', 'off']
           }
         }
       };
@@ -45,6 +77,40 @@
 
     constructor() {
       this.parasites = new Map();
+      this.cloneOnBounceEnabled = false;
+      this.lastCloneTime = 0;
+      this.parasiteSpeed = 2;
+    }
+
+    setCloneOnBounce(args) {
+      this.cloneOnBounceEnabled = args.TOGGLE === 'on';
+    }
+
+    setParasiteSpeed(args) {
+      this.parasiteSpeed = Math.max(0, Number(args.SPEED));
+      for (const spriteName of this.parasites.keys()) {
+        const parasiteData = this.parasites.get(spriteName);
+        if (parasiteData) {
+          parasiteData.speed = this.parasiteSpeed;
+
+          const angle = Math.random() * Math.PI * 2;
+          const speed = this.parasiteSpeed * (0.8 + Math.random() * 0.4);
+          parasiteData.targetVelocityX = Math.cos(angle) * speed;
+          parasiteData.targetVelocityY = Math.sin(angle) * speed;
+          parasiteData.velocityX = parasiteData.targetVelocityX;
+          parasiteData.velocityY = parasiteData.targetVelocityY;
+
+          parasiteData.clones.forEach(cloneData => {
+            cloneData.speed = this.parasiteSpeed;
+            const cloneAngle = Math.random() * Math.PI * 2;
+            const cloneSpeed = this.parasiteSpeed * (0.8 + Math.random() * 0.4);
+            cloneData.targetVelocityX = Math.cos(cloneAngle) * cloneSpeed;
+            cloneData.targetVelocityY = Math.sin(cloneAngle) * cloneSpeed;
+            cloneData.velocityX = cloneData.targetVelocityX;
+            cloneData.velocityY = cloneData.targetVelocityY;
+          });
+        }
+      }
     }
 
     getSprites() {
@@ -62,7 +128,6 @@
       sprite.setVisible(false);
       const costumeDataURL = this._getCostumeDataURL(sprite);
       if (!costumeDataURL) {
-        console.error('Failed to get costume data for sprite:', spriteName);
         sprite.setVisible(true);
         return;
       }
@@ -76,20 +141,21 @@
       parasite.style.height = `${pixelHeight}px`;
       const canvas = document.querySelector('canvas');
       if (!canvas) {
-        console.error('No canvas found');
         sprite.setVisible(true);
         return;
       }
       const canvasRect = canvas.getBoundingClientRect();
-      const x = canvasRect.left + (sprite.x + 240) * (canvasRect.width / 480);
-      const y = canvasRect.top + (-sprite.y + 180) * (canvasRect.height / 360);
+      const originX = canvasRect.left + (sprite.x + 240) * (canvasRect.width / 480);
+      const originY = canvasRect.top + (-sprite.y + 180) * (canvasRect.height / 360);
+      const x = originX;
+      const y = originY;
       parasite.style.left = `${x}px`;
       parasite.style.top = `${y}px`;
       const parasiteData = {
         element: parasite,
         sprite: sprite,
-        originX: x,
-        originY: y,
+        originX: originX,
+        originY: originY,
         state: 'wandering',
         x: x,
         y: y,
@@ -102,7 +168,10 @@
         height: pixelHeight,
         lastDirectionChange: 0,
         momentum: 0,
-        nextDirectionChange: Math.random() * 2000 + 1000
+        nextDirectionChange: Math.random() * 2000 + 1000,
+        clones: [],
+        lastCloneTime: 0,
+        speed: this.parasiteSpeed
       };
       this.parasites.set(spriteName, parasiteData);
       parasite.onload = () => {
@@ -110,7 +179,6 @@
         this._startParasiteAnimation(spriteName);
       };
       parasite.onerror = () => {
-        console.error('Failed to load sprite costume');
         parasite.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABPSURBVFhH7dKxDcAwDAOfoBVoA/W/2E8gYMDdo1esCIBhA2l4XbQDd4w+gBwAHIAcgByAHIAcgByAHIAcgByAHIAcgByAHIAcgByAHIAcgBz4A2WHB7sH6v6mAAAAAElFTkSuQmCC';
         document.body.appendChild(parasite);
         this._startParasiteAnimation(spriteName);
@@ -121,19 +189,28 @@
       const spriteName = args.SPRITE;
       const parasiteData = this.parasites.get(spriteName);
       if (!parasiteData) return;
-      const sprite = parasiteData.sprite;
-      const canvas = document.querySelector('canvas');
-      if (canvas) {
-        const canvasRect = canvas.getBoundingClientRect();
-        const newOriginX = canvasRect.left + (sprite.x + 240) * (canvasRect.width / 480);
-        const newOriginY = canvasRect.top + (-sprite.y + 180) * (canvasRect.height / 360);
-        parasiteData.originX = newOriginX;
-        parasiteData.originY = newOriginY;
-      }
       parasiteData.state = 'returning';
       parasiteData.targetVelocityX = 0;
       parasiteData.targetVelocityY = 0;
       this.parasites.set(spriteName, parasiteData);
+
+      parasiteData.clones.forEach(cloneData => {
+        const clone = cloneData.element;
+        clone.style.transition = 'opacity 0.5s';
+        clone.style.opacity = 0;
+        setTimeout(() => {
+          if (clone.parentNode) {
+            clone.remove();
+          }
+        }, 500);
+      });
+      parasiteData.clones = [];
+    }
+
+    cageAllSpritesButton() {
+      for (const spriteName of this.parasites.keys()) {
+        this.cageSprite({ SPRITE: spriteName });
+      }
     }
 
     _getSpriteTarget(spriteName) {
@@ -189,13 +266,16 @@
           state,
           width: parasiteWidth,
           height: parasiteHeight,
-          nextDirectionChange
+          nextDirectionChange,
+          lastCloneTime,
+          clones,
+          speed: parasiteSpeed
         } = parasiteData;
-        let { 
-          x, y, 
-          velocityX, velocityY, 
+        let {
+          x, y,
+          velocityX, velocityY,
           targetVelocityX, targetVelocityY,
-          direction, 
+          direction,
           lastDirectionChange,
           momentum
         } = parasiteData;
@@ -203,7 +283,7 @@
         if (state === 'wandering') {
           if (now > lastDirectionChange + nextDirectionChange) {
             const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 2 + 1;
+            const speed = parasiteSpeed * (0.8 + Math.random() * 0.4);
             targetVelocityX = Math.cos(angle) * speed;
             targetVelocityY = Math.sin(angle) * speed;
             if (Math.abs(targetVelocityX) > 0.5) {
@@ -263,34 +343,153 @@
             velocityY += (targetVelocityY - velocityY) * 0.15 * deltaTime;
           }
         }
-        x += velocityX * deltaTime;
-        y += velocityY * deltaTime;
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-        if (x < 0) {
-          x = 0;
-          targetVelocityX = Math.abs(targetVelocityX);
-          velocityX = Math.abs(velocityX) * 0.5;
-          direction = 1;
-          parasite.style.transform = 'scaleX(1)';
-        } else if (x > viewportWidth - parasiteWidth) {
-          x = viewportWidth - parasiteWidth;
-          targetVelocityX = -Math.abs(targetVelocityX);
-          velocityX = -Math.abs(velocityX) * 0.5;
-          direction = -1;
-          parasite.style.transform = 'scaleX(-1)';
+        let cloned = false;
+        if (!parasiteData.isClone) {
+          if (x < 0) {
+            if (this.cloneOnBounceEnabled && !cloned && (currentTime - parasiteData.lastCloneTime > 1000)) {
+              x = parasiteWidth * 0.2;
+              this._cloneParasite(parasiteData, x, y);
+              cloned = true;
+              parasiteData.lastCloneTime = currentTime;
+            }
+            x = 0;
+            targetVelocityX = Math.abs(targetVelocityX);
+            velocityX = Math.abs(velocityX) * 0.5;
+            direction = 1;
+            parasite.style.transform = 'scaleX(1)';
+          } else if (x > viewportWidth - parasiteWidth) {
+            if (this.cloneOnBounceEnabled && !cloned && (currentTime - parasiteData.lastCloneTime > 1000)) {
+              x = viewportWidth - parasiteWidth * 0.8;
+              this._cloneParasite(parasiteData, x, y);
+              cloned = true;
+              parasiteData.lastCloneTime = currentTime;
+            }
+            x = viewportWidth - parasiteWidth;
+            targetVelocityX = -Math.abs(targetVelocityX);
+            velocityX = -Math.abs(velocityX) * 0.5;
+            direction = -1;
+            parasite.style.transform = 'scaleX(-1)';
+          }
+          if (y < 0) {
+            if (this.cloneOnBounceEnabled && !cloned && (currentTime - parasiteData.lastCloneTime > 1000)) {
+              y = parasiteHeight * 0.2;
+              this._cloneParasite(parasiteData, x, y);
+              cloned = true;
+              parasiteData.lastCloneTime = currentTime;
+            }
+            y = 0;
+            targetVelocityY = Math.abs(targetVelocityY);
+            velocityY = Math.abs(velocityY) * 0.5;
+          } else if (y > viewportHeight - parasiteHeight) {
+            if (this.cloneOnBounceEnabled && !cloned && (currentTime - parasiteData.lastCloneTime > 1000)) {
+              y = viewportHeight - parasiteHeight * 0.8;
+              this._cloneParasite(parasiteData, x, y);
+              cloned = true;
+              parasiteData.lastCloneTime = currentTime;
+            }
+            y = viewportHeight - parasiteHeight;
+            targetVelocityY = -Math.abs(targetVelocityY);
+            velocityY = -Math.abs(velocityY) * 0.5;
+          }
         }
-        if (y < 0) {
-          y = 0;
-          targetVelocityY = Math.abs(targetVelocityY);
-          velocityY = Math.abs(velocityY) * 0.5;
-        } else if (y > viewportHeight - parasiteHeight) {
-          y = viewportHeight - parasiteHeight;
-          targetVelocityY = -Math.abs(targetVelocityY);
-          velocityY = -Math.abs(velocityY) * 0.5;
-        }
+        x += velocityX * deltaTime;
+        y += velocityY * deltaTime;
+
+
         parasite.style.left = `${x}px`;
         parasite.style.top = `${y}px`;
+
+        parasiteData.clones.forEach(cloneData => {
+          let {
+            element: cloneParasite,
+            x: cloneX, y: cloneY,
+            velocityX: cloneVelocityX, velocityY: cloneVelocityY,
+            targetVelocityX: cloneTargetVelocityX, targetVelocityY: cloneTargetVelocityY,
+            direction: cloneDirection,
+            lastDirectionChange: cloneLastDirectionChange,
+            momentum: cloneMomentum,
+            nextDirectionChange: cloneNextDirectionChange,
+            speed: parasiteSpeed
+          } = cloneData;
+          let cloneState = 'wandering';
+          let now = currentTime;
+
+          if (now > cloneLastDirectionChange + cloneNextDirectionChange) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = parasiteSpeed * (0.8 + Math.random() * 0.4);
+            cloneTargetVelocityX = Math.cos(angle) * speed;
+            cloneTargetVelocityY = Math.sin(angle) * speed;
+            if (Math.abs(cloneTargetVelocityX) > 0.5) {
+              const newDirection = cloneTargetVelocityX > 0 ? 1 : -1;
+              if (newDirection !== cloneDirection) {
+                cloneDirection = newDirection;
+                cloneParasite.style.transform = cloneDirection > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+              }
+            }
+            cloneLastDirectionChange = now;
+            cloneData.nextDirectionChange = Math.random() * 3500 + 1500;
+            cloneMomentum = 0.8 + Math.random() * 0.4;
+            cloneData.momentum = cloneMomentum;
+          }
+          if (Math.random() < 0.002) {
+            const boostAngle = Math.random() * Math.PI * 2;
+            const boostStrength = Math.random() * 2 + 2;
+            cloneTargetVelocityX += Math.cos(boostAngle) * boostStrength;
+            cloneTargetVelocityY += Math.sin(boostAngle) * boostStrength;
+            if (Math.abs(Math.cos(boostAngle) * boostStrength) > 3) {
+              const boostDir = Math.cos(boostAngle) > 0 ? 1 : -1;
+              if (boostDir !== cloneDirection) {
+                cloneDirection = boostDir;
+                cloneParasite.style.transform = cloneDirection > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+              }
+            }
+          }
+          cloneVelocityX += (cloneTargetVelocityX - cloneVelocityX) * 0.07 * deltaTime * cloneMomentum;
+          cloneVelocityY += (cloneTargetVelocityY - cloneVelocityY) * 0.07 * deltaTime * cloneMomentum;
+
+
+          if (cloneX < 0) {
+            cloneX = 0;
+            cloneTargetVelocityX = Math.abs(cloneTargetVelocityX);
+            cloneVelocityX = Math.abs(cloneVelocityX) * 0.5;
+            cloneDirection = 1;
+            cloneParasite.style.transform = 'scaleX(1)';
+          } else if (cloneX > viewportWidth - parasiteWidth) {
+            cloneX = viewportWidth - parasiteWidth;
+            cloneTargetVelocityX = -Math.abs(cloneTargetVelocityX);
+            cloneVelocityX = -Math.abs(cloneVelocityX) * 0.5;
+            cloneDirection = -1;
+            cloneParasite.style.transform = 'scaleX(-1)';
+          }
+          if (cloneY < 0) {
+            cloneY = 0;
+            cloneTargetVelocityY = Math.abs(cloneTargetVelocityY);
+            cloneVelocityY = Math.abs(cloneVelocityY) * 0.5;
+          } else if (cloneY > viewportHeight - parasiteHeight) {
+            cloneY = viewportHeight - parasiteHeight;
+            cloneTargetVelocityY = -Math.abs(cloneTargetVelocityY);
+            cloneVelocityY = -Math.abs(cloneVelocityY) * 0.5;
+          }
+
+          cloneX += cloneVelocityX * deltaTime;
+          cloneY += cloneVelocityY * deltaTime;
+
+          cloneData.x = cloneX;
+          cloneData.y = cloneY;
+          cloneData.velocityX = cloneVelocityX;
+          cloneData.velocityY = cloneVelocityY;
+          cloneData.targetVelocityX = cloneTargetVelocityX;
+          cloneData.targetVelocityY = cloneTargetVelocityY;
+          cloneData.direction = cloneDirection;
+          cloneData.lastDirectionChange = cloneLastDirectionChange;
+
+          cloneParasite.style.left = `${cloneX}px`;
+          cloneParasite.style.top = `${cloneY}px`;
+        });
+
+
         this.parasites.set(spriteName, {
           ...parasiteData,
           x,
@@ -300,11 +499,47 @@
           targetVelocityX,
           targetVelocityY,
           direction,
-          lastDirectionChange
+          lastDirectionChange,
+          lastCloneTime
         });
         requestAnimationFrame(animate);
       };
       requestAnimationFrame(animate);
+    }
+
+    _cloneParasite(parasiteData, x, y) {
+      const { element: originalParasite } = parasiteData;
+      const cloneParasite = originalParasite.cloneNode(true);
+      cloneParasite.style.position = 'fixed';
+      cloneParasite.style.zIndex = '9998';
+      cloneParasite.style.pointerEvents = 'none';
+      cloneParasite.style.left = `${x}px`;
+      cloneParasite.style.top = `${y}px`;
+      cloneParasite.style.opacity = 0;
+      cloneParasite.style.transition = 'opacity 0.2s';
+      document.body.appendChild(cloneParasite);
+      setTimeout(() => {
+        cloneParasite.style.opacity = 1;
+      }, 10);
+
+
+      const cloneData = {
+        element: cloneParasite,
+        x: x,
+        y: y,
+        velocityX: 0,
+        velocityY: 0,
+        targetVelocityX: 0,
+        targetVelocityY: 0,
+        direction: 1,
+        lastDirectionChange: 0,
+        momentum: 0,
+        nextDirectionChange: Math.random() * 2000 + 1000,
+        isClone: true,
+        lastCloneTime: 0,
+        speed: parasiteData.speed
+      };
+      parasiteData.clones.push(cloneData);
     }
   }
 

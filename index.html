@@ -513,6 +513,12 @@
             transform: scale(1.06);
         }
 
+        .extension-card:hover .badges-container .extension-badge,
+        .extension-card:focus .badges-container .extension-badge {
+            opacity: 0;
+            transition: opacity var(--transition-speed) ease;
+        }
+
 
         .extension-card.removed .extension-badge {
             z-index: 2;
@@ -869,10 +875,13 @@
             const badgeElement = createElement('div', ['extension-badge']);
             const badgeConfig = badgeStyles[badgeType.toLowerCase()];
 
+            badgeElement.style.borderWidth = '4px'; // Set default border width
+
             if (badgeConfig) {
                 badgeElement.style.backgroundColor = badgeConfig.backgroundColor;
-                badgeElement.style.borderColor = badgeConfig.borderColor;
+                badgeElement.style.borderColor = badgeConfig.badgeBorderColor || badgeConfig.borderColor;
                 if (badgeConfig.color) badgeElement.style.color = badgeConfig.color;
+                if (badgeConfig.borderWidth) badgeElement.style.borderWidth = badgeConfig.borderWidth; // Override default if defined
             } else {
                 badgeElement.style.backgroundColor = '#747474';
                 badgeElement.style.borderColor = '#3c3c3c';
