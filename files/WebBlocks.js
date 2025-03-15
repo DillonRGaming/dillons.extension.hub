@@ -14,7 +14,7 @@ class WebBlocks {
         {
           opcode: 'runHTML',
           blockType: Scratch.BlockType.COMMAND,
-          text: 'Run HTML [HTML]',
+          text: 'run HTML [HTML]',
           arguments: {
             HTML: {
               type: Scratch.ArgumentType.STRING,
@@ -28,7 +28,7 @@ class WebBlocks {
         {
           opcode: 'runCSS',
           blockType: Scratch.BlockType.COMMAND,
-          text: 'Run CSS [CSS]',
+          text: 'run CSS [CSS]',
           arguments: {
             CSS: {
               type: Scratch.ArgumentType.STRING,
@@ -42,7 +42,7 @@ class WebBlocks {
         {
           opcode: 'runJS',
           blockType: Scratch.BlockType.COMMAND,
-          text: 'Run JS [JS]',
+          text: 'run JS [JS]',
           arguments: {
             JS: {
               type: Scratch.ArgumentType.STRING,
