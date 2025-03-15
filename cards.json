@@ -9,7 +9,8 @@
         "credit": "Dillon",
         "creditLinks": [],
         "description": "integration for accessing Google Gemini.",
-        "badge": null
+        "badge": null,
+        "hoverColor": "#555555"
     },
     {
         "id": "FormatNumbers",
@@ -21,7 +22,8 @@
         "credit": "DogeisCut, Dillon",
         "creditLinks": ["https://github.com/DogeisCut", null],
         "description": "Formats numbers to a readable format.",
-        "badge": null
+        "badge": null,
+        "hoverColor": "#AA66B3"
     },
     {
         "id": "Parasite",
@@ -33,7 +35,8 @@
         "credit": "Dillon",
         "creditLinks": [],
         "description": "Allows releasing of sprites.",
-        "badge": "Unstable"
+        "badge": "Unstable",
+        "hoverColor": "#E55557"
     },
     {
         "id": "WorldData",
@@ -45,7 +48,8 @@
         "credit": "Dillon",
         "creditLinks": [],
         "description": "Outputs global data like population, capital city and more.",
-        "badge": null
+        "badge": null,
+        "hoverColor": "#5566CC"
     },
     {
         "id": "PangStats",
@@ -57,7 +61,8 @@
         "credit": "Dillon",
         "creditLinks": [],
         "description": "Displays FPS, CPU usage, and frame time.",
-        "badge": null
+        "badge": null,
+        "hoverColor": "#6699FF"
     },
     {
         "id": "WebBlocks",
@@ -69,6 +74,7 @@
         "credit": "Dillon",
         "creditLinks": [],
         "description": "Allows running HTML, CSS, and JS.",
-        "badge": "New"
+        "badge": "New",
+        "hoverColor": "#556067"
     }
 ]
