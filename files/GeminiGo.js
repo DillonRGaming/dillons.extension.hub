@@ -21,7 +21,7 @@
                 blocks: [
                     {
                         opcode: "setApiKey",
-                        text: "Set API key to [API_KEY]",
+                        text: "set API key to [API_KEY]",
                         blockType: Scratch.BlockType.COMMAND,
                         arguments: {
                             API_KEY: {
@@ -32,12 +32,12 @@
                     },
                     {
                         opcode: "useDefaultApiKey",
-                        text: "Use default API key",
+                        text: "use default API key",
                         blockType: Scratch.BlockType.COMMAND,
                     },
                     {
                         opcode: "askGemini",
-                        text: "Ask Gemini (No Memory) [QUESTION]",
+                        text: "ask Gemini (No Memory) [QUESTION]",
                         blockType: Scratch.BlockType.REPORTER,
                         arguments: {
                             QUESTION: {
@@ -48,7 +48,7 @@
                     },
                     {
                         opcode: "setPrompt",
-                        text: "Set prompt to [PROMPT]",
+                        text: "set prompt to [PROMPT]",
                         blockType: Scratch.BlockType.COMMAND,
                         arguments: {
                             PROMPT: {
@@ -59,7 +59,7 @@
                     },
                     {
                         opcode: "selectModel",
-                        text: "Select model [MODEL]",
+                        text: "select model [MODEL]",
                         blockType: Scratch.BlockType.COMMAND,
                         arguments: {
                             MODEL: {

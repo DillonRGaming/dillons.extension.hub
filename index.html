@@ -181,13 +181,6 @@
             transition: opacity 0.2s ease-out 0.1s;
         }
 
-        /* Remove hover/focus opacity change for badges */
-        /* .extension-card:hover .extension-badge,
-        .extension-card:focus .extension-badge {
-            opacity: 0;
-            transition: opacity 0.2s ease-out;
-        } */
-
         .extension-card.removed {
             opacity: 0.7;
             cursor: default;
@@ -217,7 +210,7 @@
             opacity: 0;
         }
 
-        .extension-card > *:not(.badges-container, .description-button) {
+        .extension-card>*:not(.badges-container, .description-button) {
             position: absolute;
             top: 0;
             left: 0;
@@ -230,7 +223,7 @@
             box-sizing: border-box;
         }
 
-        .extension-card > .extension-credit {
+        .extension-card>.extension-credit {
             height: auto;
             align-items: flex-end;
             top: auto;
@@ -245,9 +238,9 @@
             opacity: 0;
             transition: opacity 0.2s ease-out;
             z-index: 2;
-            font-size: 1.3em;
+            font-size: 1.1em;
             text-align: center;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .extension-card.description-active .extension-title {
@@ -327,6 +320,7 @@
             z-index: 2;
             backdrop-filter: blur(3px);
             -webkit-backdrop-filter: blur(3px);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .description-text.active {
@@ -414,7 +408,7 @@
             }
 
             .extension-card {
-                font-size: 1.1em;
+                font-size: 1em;
                 padding-bottom: 66%;
             }
 
@@ -425,11 +419,44 @@
             }
         }
 
-        /* Base styles for extension-badge */
+        @media (max-width: 576px) {
+            body {
+                padding: 10px;
+                font-size: 15px;
+            }
+
+            .header-text h1 {
+                font-size: 1.8em;
+            }
+
+            .search-container {
+                max-width: 100%;
+            }
+
+            .search-input {
+                font-size: 0.9rem;
+                padding: 8px 35px 8px 10px;
+            }
+
+            .clear-search {
+                right: 30px;
+            }
+
+            .extension-card {
+                font-size: 0.9em;
+                padding-bottom: 75%;
+            }
+
+            :root {
+                --card-gap: 15px;
+                --card-border-radius: 10px;
+                --card-border-width: 4px;
+            }
+        }
+
         .extension-badge {
             background-color: #747474;
             border-color: #3c3c3c;
-            width: auto;
             height: 22px;
             line-height: normal;
             padding: 0 7px;
@@ -439,16 +466,18 @@
             font-weight: bold;
             text-transform: uppercase;
             text-align: center;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             border-width: 1.5px;
             border-style: solid;
             animation: pulse 2s ease-in-out infinite;
-            /* Removed opacity transition */
+            overflow-wrap: anywhere;
+            white-space: normal;
+            margin-right: 5px;
+            margin-bottom: 5px;
         }
 
-        /* Pulse animation */
         @keyframes pulse {
             0% {
                 transform: scale(1);
@@ -463,29 +492,7 @@
             }
         }
 
-        /* Specific badge styles */
-        .new-badge {
-            background-color: #29ABE2;
-            border-color: #2286B3;
-        }
 
-        .updated-badge {
-            background-color: #28a745;
-            border-color: #1e7e34;
-        }
-
-        .removed-badge {
-            background-color: #dc3545;
-            border-color: #b02a37;
-        }
-
-        .unstable-badge {
-            background-color: #ffda6b;
-            color: black;
-            border-color: #d39e00;
-        }
-
-        /* Badges container */
         .badges-container {
             position: absolute;
             top: 10px;
@@ -493,16 +500,16 @@
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            gap: 5px;
+            gap: 4px;
             z-index: 5;
-             /* Ensure badges scale with the card */
             transform-origin: top right;
             transition: transform 0.2s ease-out;
+            max-width: 200px;
+            flex-wrap: wrap;
         }
 
-        /* Scale badges container with card */
         .extension-card:hover .badges-container,
-        .extension-card:focus .badges-container{
+        .extension-card:focus .badges-container {
             transform: scale(1.06);
         }
 
@@ -568,19 +575,15 @@
 
         let cardsData = [];
         const CARDS_URL = 'cards.json';
+        const BADGES_URL = 'badges.json';
+        let badgeStyles = {};
 
         function createElement(tag, classes, attributes = {}) {
             const element = document.createElement(tag);
             if (classes) {
-                if (Array.isArray(classes)) {
-                    classes.forEach(cls => element.classList.add(cls));
-                } else {
-                    element.classList.add(classes);
-                }
+                (Array.isArray(classes) ? classes : [classes]).forEach(cls => element.classList.add(cls));
             }
-            Object.entries(attributes).forEach(([key, value]) => {
-                element.setAttribute(key, value);
-            });
+            Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
             return element;
         }
 
@@ -599,7 +602,7 @@
             });
 
             clearSearch.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
+                if (['Enter', ' '].includes(event.key)) {
                     event.preventDefault();
                     searchInput.value = '';
                     clearSearch.classList.remove('visible');
@@ -610,15 +613,13 @@
         }
 
         function filterCards(query) {
-            if (!cardsData || cardsData.length === 0) return;
+            if (!cardsData?.length) return;
 
             grid.innerHTML = '';
             let visibleCards = 0;
 
             cardsData.forEach(card => {
-                if (!query ||
-                    card.title.toLowerCase().includes(query) ||
-                    (card.description && card.description.toLowerCase().includes(query))) {
+                if (!query || card.title.toLowerCase().includes(query) || card.description?.toLowerCase().includes(query)) {
                     createCard(card);
                     visibleCards++;
                 }
@@ -648,9 +649,7 @@
             });
 
             const creditElement = createElement('div', 'extension-credit');
-            if (card.credit) {
-                createCreditContent(creditElement, card);
-            }
+            if (card.credit) createCreditContent(creditElement, card);
 
             const descriptionButton = createElement('div', 'description-button', {
                 role: 'button',
@@ -675,27 +674,19 @@
             cardElement.appendChild(descriptionButton);
             cardElement.appendChild(downloadIndicator);
 
-            if (card.credit) {
-                cardElement.appendChild(creditElement);
-            }
+            if (card.credit) cardElement.appendChild(creditElement);
 
             const badgesContainer = createElement('div', 'badges-container');
-            const badges = Array.isArray(card.badges) ? card.badges : card.badge ? [card.badge] : [];
+            const badges = Array.isArray(card.badge) ? card.badge : (card.badge ? [card.badge] : []);
 
-            badges.forEach(badge => {
-                const badgeElement = createElement('div', ['extension-badge', `${badge.toLowerCase()}-badge`]);
-                let badgeIcon = getBadgeIcon(badge);
-                badgeElement.innerHTML = badge + badgeIcon;
-                badgesContainer.appendChild(badgeElement);
+            badges.forEach(badge => badgesContainer.appendChild(createBadgeElement(badge)));
 
-                if (badge.toLowerCase() === 'removed') {
-                    cardElement.classList.add('removed');
-                    cardElement.setAttribute('aria-label', `${card.title}. This extension is no longer available.`);
-                }
-            });
+            if (badges.includes('removed')) {
+                cardElement.classList.add('removed');
+                cardElement.setAttribute('aria-label', `${card.title}. This extension is no longer available.`);
+            }
 
             cardElement.appendChild(badgesContainer);
-
             grid.appendChild(cardElement);
 
             addCardStyle(card);
@@ -720,7 +711,7 @@
             let creditHTML = '<span class="by-label">by </span>';
 
             credits.forEach((credit, index) => {
-                const link = card.creditLinks && card.creditLinks[index] ? card.creditLinks[index] : null;
+                const link = card.creditLinks?.[index];
                 creditHTML += link
                     ? `<span class="credit-name" style="margin: 0 3px;"><a href="${sanitizeUrl(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(credit)}</a></span>`
                     : `<span class="credit-name" style="margin: 0 3px;">${escapeHtml(credit)}</span>`;
@@ -728,18 +719,12 @@
             });
 
             creditElement.innerHTML = creditHTML;
-
-            creditElement.querySelectorAll('a').forEach(linkElement => {
-                linkElement.addEventListener('click', (event) => {
-                    event.stopPropagation();
-                });
-            });
+            creditElement.querySelectorAll('a').forEach(linkElement => linkElement.addEventListener('click', (event) => event.stopPropagation()));
         }
 
         function addCardStyle(card) {
             const backgroundColor = validateColor(card.backgroundColor) || '#333333';
             const borderColor = validateColor(card.borderColor) || '#555553';
-            // hoverColor is read from card.hoverColor in cards.json. If not present, it defaults to --accent-color
             const hoverBorderColor = validateColor(card.hoverColor) || getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
 
             styleElement.textContent += `
@@ -761,57 +746,41 @@
 
             cardElement.addEventListener('mouseleave', deactivateDescription);
 
-            if (card.badge?.toLowerCase() !== 'removed') {
-                cardElement.addEventListener('click', (event) => {
-                    if (event.target.closest('a')) return;
-                    if (event.target === descriptionButton) return;
+            cardElement.addEventListener('click', (event) => {
+                if (event.target.closest('a') || event.target === descriptionButton) return;
+                if (card.download) {
+                    showDownloadIndicator(downloadIndicator);
+                    downloadFile(card.download, downloadIndicator);
+                    cardElement.blur();
+                }
+            });
+
+            cardElement.addEventListener('keydown', (event) => {
+                if (['Enter', ' '].includes(event.key)) {
+                    event.preventDefault();
+                    if (event.target.closest('a') || event.target === descriptionButton) return;
                     if (card.download) {
                         showDownloadIndicator(downloadIndicator);
                         downloadFile(card.download, downloadIndicator);
                         cardElement.blur();
                     }
-                });
-
-                cardElement.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        if (event.target.closest('a')) return;
-                        if (event.target === descriptionButton) return;
-                        if (card.download) {
-                            showDownloadIndicator(downloadIndicator);
-                            downloadFile(card.download, downloadIndicator);
-                            cardElement.blur();
-                        }
-                    }
-                });
-            }
+                }
+            });
 
             descriptionButton.addEventListener('click', (event) => {
                 event.stopPropagation();
                 isDescriptionActive = !isDescriptionActive;
-
-                if (isDescriptionActive && card.description) {
-                    descriptionTextElement.classList.add('active');
-                    cardElement.classList.add('description-active');
-                } else {
-                    descriptionTextElement.classList.remove('active');
-                    cardElement.classList.remove('description-active');
-                }
+                descriptionTextElement.classList.toggle('active', isDescriptionActive && card.description);
+                cardElement.classList.toggle('description-active', isDescriptionActive && card.description);
             });
 
             descriptionButton.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
+                if (['Enter', ' '].includes(event.key)) {
                     event.preventDefault();
                     event.stopPropagation();
                     isDescriptionActive = !isDescriptionActive;
-
-                    if (isDescriptionActive && card.description) {
-                        descriptionTextElement.classList.add('active');
-                        cardElement.classList.add('description-active');
-                    } else {
-                        descriptionTextElement.classList.remove('active');
-                        cardElement.classList.remove('description-active');
-                    }
+                    descriptionTextElement.classList.toggle('active', isDescriptionActive && card.description);
+                    cardElement.classList.toggle('description-active', isDescriptionActive && card.description);
                 }
             });
         }
@@ -877,30 +846,49 @@
             }
         }
 
-        function getBadgeIcon(badge) {
-            let badgeIcon = '';
-            switch (badge.toLowerCase()) {
-                case 'new':
-                    badgeIcon = '<i class="material-icons" style="font-size: 0.8rem; vertical-align: middle; position: relative; top: -1px; margin-left: 2px;">stars</i>';
-                    break;
-                case 'updated':
-                    badgeIcon = '<i class="material-icons" style="font-size: 0.8rem; vertical-align: middle; position: relative; top: -1px; margin-left: 2px;">refresh</i>';
-                    break;
-                case 'removed':
-                    badgeIcon = '<i class="material-icons" style="font-size: 0.8rem; vertical-align: middle; position: relative; top: -1px; margin-left: 2px;">clear</i>';
-                    break;
-                case 'unstable':
-                    badgeIcon = '<i class="material-icons" style="font-size: 0.8rem; vertical-align: middle; position: relative; top: -1px; margin-left: 2px;">report_problem</i>';
-                    break;
+        async function loadBadgeData() {
+            try {
+                const response = await fetch(BADGES_URL);
+                if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+                const badges = await response.json();
+                return badges;
+            } catch (error) {
+                console.error('Failed to load badges:', error);
+                return {};
             }
-            return badgeIcon;
         }
+
+
+        function getBadgeIcon(badgeType) {
+            const badgeConfig = badgeStyles[badgeType.toLowerCase()];
+            return badgeConfig?.icon ? `<i class="material-icons" style="font-size: 0.8rem; vertical-align: middle; position: relative; top: -1px; margin-left: 2px;">${badgeConfig.icon}</i>` : '';
+        }
+
+
+        function createBadgeElement(badgeType) {
+            const badgeElement = createElement('div', ['extension-badge']);
+            const badgeConfig = badgeStyles[badgeType.toLowerCase()];
+
+            if (badgeConfig) {
+                badgeElement.style.backgroundColor = badgeConfig.backgroundColor;
+                badgeElement.style.borderColor = badgeConfig.borderColor;
+                if (badgeConfig.color) badgeElement.style.color = badgeConfig.color;
+            } else {
+                badgeElement.style.backgroundColor = '#747474';
+                badgeElement.style.borderColor = '#3c3c3c';
+            }
+
+            badgeElement.innerHTML = badgeType + getBadgeIcon(badgeType);
+            return badgeElement;
+        }
+
 
         async function initApp() {
             try {
+                badgeStyles = await loadBadgeData();
                 cardsData = await loadCardData();
                 loadingIndicator.style.display = 'none';
-                if (cardsData.length === 0) {
+                if (!cardsData?.length) {
                     grid.innerHTML = '<p>No extensions available.</p>';
                     return;
                 }

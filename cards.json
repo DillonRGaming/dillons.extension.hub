@@ -7,9 +7,8 @@
         "borderColor": "#222222",
         "download": "files/GeminiGo.js",
         "credit": "Dillon",
-        "creditLinks": [],
+        "creditLinks": [null],
         "description": "integration for accessing Google Gemini.",
-        "badge": null,
         "hoverColor": "#555555"
     },
     {
@@ -22,7 +21,6 @@
         "credit": "DogeisCut, Dillon",
         "creditLinks": ["https://github.com/DogeisCut", null],
         "description": "Formats numbers to a readable format.",
-        "badge": null,
         "hoverColor": "#AA66B3"
     },
     {
@@ -33,10 +31,10 @@
         "borderColor": "#B22224",
         "download": "files/Parasite.js",
         "credit": "Dillon",
-        "creditLinks": [],
+        "creditLinks": [null],
         "description": "Allows releasing of sprites.",
-        "badge": "Unstable",
-        "hoverColor": "#E55557"
+        "hoverColor": "#E55557",
+        "badge": ["unstable"]
     },
     {
         "id": "WorldData",
@@ -46,9 +44,8 @@
         "borderColor": "#273C8E",
         "download": "files/WorldData.js",
         "credit": "Dillon",
-        "creditLinks": [],
+        "creditLinks": [null],
         "description": "Outputs global data like population, capital city and more.",
-        "badge": null,
         "hoverColor": "#5566CC"
     },
     {
@@ -59,9 +56,8 @@
         "borderColor": "#3569c4",
         "download": "files/PangStats.js",
         "credit": "Dillon",
-        "creditLinks": [],
+        "creditLinks": [null],
         "description": "Displays FPS, CPU usage, and frame time.",
-        "badge": null,
         "hoverColor": "#6699FF"
     },
     {
@@ -72,9 +68,9 @@
         "borderColor": "#28333A",
         "download": "files/WebBlocks.js",
         "credit": "Dillon",
-        "creditLinks": [],
+        "creditLinks": [null],
         "description": "Allows running HTML, CSS, and JS.",
-        "badge": "New",
+        "badge": ["new", "beta"],
         "hoverColor": "#556067"
     }
 ]

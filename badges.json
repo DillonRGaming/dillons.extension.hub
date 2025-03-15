@@ -1,0 +1,23 @@
+{
+    "new": {
+      "backgroundColor": "#4FC3F7",
+      "borderColor": "#29B6F6",
+      "icon": "stars"
+    },
+    "updated": {
+      "backgroundColor": "#28a745",
+      "borderColor": "#1e7e34",
+      "icon": "refresh"
+    },
+    "unstable": {
+      "backgroundColor": "#ffda6b",
+      "color": "black",
+      "borderColor": "#d39e00",
+      "icon": "report_problem"
+    },
+    "beta": {
+      "backgroundColor": "#ffa000",
+      "borderColor": "#ff8f00",
+      "icon": "warning"
+    }
+  }
