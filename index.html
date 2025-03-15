@@ -259,6 +259,8 @@
             border-radius: 10px;
             object-fit: cover;
             transition: opacity var(--transition-speed) ease-out, filter var(--transition-speed) ease-out;
+            /* Preload the image */
+            image-rendering: -webkit-optimize-contrast;
         }
 
         .extension-credit {
@@ -282,9 +284,9 @@
             color: var(--accent-color);
             text-decoration: none;
             text-shadow: -1px -1px 0 #0000FF,
-                         1px -1px 0 #0000FF,
-                         -1px 1px 0 #0000FF,
-                         1px 1px 0 #0000FF;
+                1px -1px 0 #0000FF,
+                -1px 1px 0 #0000FF,
+                1px 1px 0 #0000FF;
         }
 
         .description-button {
@@ -436,13 +438,10 @@
             border-color: #d39e00;
         }
 
-        /* Container for badges, positioned at the top right of the card, allows multiple badges */
         .badges-container {
             position: absolute;
             top: 10px;
-            /* Adjusted top to 10px to give some space from the card border */
             right: 10px;
-            /* Adjusted right to 10px to give some space from the card border */
             display: flex;
             flex-direction: column;
             align-items: flex-end;
@@ -585,12 +584,12 @@
 
             const titleElement = createElement('div', 'extension-title');
             titleElement.textContent = card.title;
-
-            const imageElement = createElement('img', 'extension-image', {
-                src: card.image || 'placeholder.jpg',
-                alt: card.title,
-                loading: 'lazy'
+            const imageElement = createElement('img', 'extension-image', {  // Changed to img tag
+                style: `background-color: ${validateColor(card.backgroundColor) || '#333'}; width: 100%; height: 100%;`, // Use 100% height
+                'data-src': card.image, // Use data-src for lazy loading
+                src: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' // 1x1 transparent GIF
             });
+
 
             const creditElement = createElement('div', 'extension-credit');
             if (card.credit) {
@@ -625,7 +624,6 @@
             }
 
             const badgesContainer = createElement('div', 'badges-container');
-            // Ensure badges is always an array
             const badges = Array.isArray(card.badges) ? card.badges : card.badge ? [card.badge] : [];
 
             badges.forEach(badge => {
@@ -646,6 +644,19 @@
 
             addCardStyle(card);
             setupCardEventListeners(cardElement, descriptionButton, descriptionTextElement, downloadIndicator, card);
+
+            // Intersection Observer for lazy loading
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        observer.unobserve(img);
+                    }
+                });
+            });
+            observer.observe(imageElement);
+
 
             return cardElement;
         }
@@ -696,7 +707,7 @@
                     if (event.target === descriptionButton) return;
                     if (card.download) {
                         showDownloadIndicator(downloadIndicator);
-                        downloadFile(card.download, indicator);
+                        downloadFile(card.download, downloadIndicator);
                     }
                 });
 
@@ -746,18 +757,20 @@
 
         function showDownloadIndicator(indicator) {
             indicator.classList.add('active');
-            setTimeout(() => indicator.classList.remove('active'), 2000);
+
         }
 
         function downloadFile(url, indicator) {
+            indicator.classList.add('active');
             try {
                 const link = createElement('a', null, {
                     href: sanitizeUrl(url),
-                    download: url.split('/').pop()
+                    download: ''
                 });
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                indicator.classList.remove('active');
             } catch (error) {
                 console.error('Download failed:', error);
                 alert('Download failed.');
