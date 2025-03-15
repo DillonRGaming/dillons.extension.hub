@@ -414,7 +414,23 @@
             transition: opacity var(--transition-speed) ease-out;
             border-width: 2px;
             border-style: solid;
+            /* Add pulsing animation */
+            animation: pulse 2s infinite;
 
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .new-badge {
@@ -757,11 +773,13 @@
 
         function showDownloadIndicator(indicator) {
             indicator.classList.add('active');
+            indicator.querySelector('.download-spinner').style.display = 'block';
 
         }
 
         function downloadFile(url, indicator) {
             indicator.classList.add('active');
+            indicator.querySelector('.download-spinner').style.display = 'block';
             try {
                 const link = createElement('a', null, {
                     href: sanitizeUrl(url),
@@ -771,10 +789,12 @@
                 link.click();
                 document.body.removeChild(link);
                 indicator.classList.remove('active');
+                indicator.querySelector('.download-spinner').style.display = 'none';
             } catch (error) {
                 console.error('Download failed:', error);
                 alert('Download failed.');
                 indicator.classList.remove('active');
+                indicator.querySelector('.download-spinner').style.display = 'none';
             }
         }
 
