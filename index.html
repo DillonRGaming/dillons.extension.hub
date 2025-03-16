@@ -274,8 +274,8 @@
         }
 
         .extension-credit a {
-            color: var(--accent-color);
-            text-decoration: none;
+            color: white;
+            text-decoration: underline;
         }
 
         .description-button {
@@ -325,49 +325,6 @@
 
         .description-text.active {
             opacity: 1;
-        }
-
-        .download-indicator {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            z-index: 10;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease-in-out;
-        }
-
-        .download-indicator.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .download-spinner {
-            width: 35px;
-            height: 35px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--accent-color);
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .download-text {
-            margin-top: 9px;
-            color: white;
-            font-size: 0.9em;
         }
 
         @media (max-width: 768px) {
@@ -643,7 +600,7 @@
             const cardElement = createElement('div', ['extension-card', card.id], {
                 tabindex: '0',
                 role: 'button',
-                'aria-label': `${card.title}. Click for more information or to download.`
+                'aria-label': `${card.title}. Click for more information.`
             });
 
             const titleElement = createElement('div', 'extension-title');
@@ -667,18 +624,12 @@
             const descriptionTextElement = createElement('div', 'description-text');
             descriptionTextElement.textContent = card.description || 'No description available';
 
-            const downloadIndicator = createElement('div', 'download-indicator');
-            const downloadSpinner = createElement('div', 'download-spinner');
-            const downloadText = createElement('div', 'download-text');
-            downloadText.textContent = 'Downloading...';
-            downloadIndicator.appendChild(downloadSpinner);
-            downloadIndicator.appendChild(downloadText);
 
             cardElement.appendChild(titleElement);
             cardElement.appendChild(imageElement);
             cardElement.appendChild(descriptionTextElement);
             cardElement.appendChild(descriptionButton);
-            cardElement.appendChild(downloadIndicator);
+
 
             if (card.credit) cardElement.appendChild(creditElement);
 
@@ -696,7 +647,7 @@
             grid.appendChild(cardElement);
 
             addCardStyle(card);
-            setupCardEventListeners(cardElement, descriptionButton, descriptionTextElement, downloadIndicator, card);
+            setupCardEventListeners(cardElement, descriptionButton, descriptionTextElement, card);
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -739,7 +690,7 @@
             `;
         }
 
-        function setupCardEventListeners(cardElement, descriptionButton, descriptionTextElement, downloadIndicator, card) {
+        function setupCardEventListeners(cardElement, descriptionButton, descriptionTextElement, card) {
             let isDescriptionActive = false;
 
             const deactivateDescription = () => {
@@ -755,9 +706,7 @@
             cardElement.addEventListener('click', (event) => {
                 if (event.target.closest('a') || event.target === descriptionButton) return;
                 if (card.download) {
-                    showDownloadIndicator(downloadIndicator);
-                    downloadFile(card.download, downloadIndicator);
-                    cardElement.blur();
+                    window.open(sanitizeUrl(card.download), '_blank');
                 }
             });
 
@@ -766,9 +715,7 @@
                     event.preventDefault();
                     if (event.target.closest('a') || event.target === descriptionButton) return;
                     if (card.download) {
-                        showDownloadIndicator(downloadIndicator);
-                        downloadFile(card.download, downloadIndicator);
-                        cardElement.blur();
+                        window.open(sanitizeUrl(card.download), '_blank');
                     }
                 }
             });
@@ -791,31 +738,6 @@
             });
         }
 
-        function showDownloadIndicator(indicator) {
-            indicator.classList.add('active');
-            indicator.querySelector('.download-spinner').style.display = 'block';
-        }
-
-        function downloadFile(url, indicator) {
-            indicator.classList.add('active');
-            indicator.querySelector('.download-spinner').style.display = 'block';
-            try {
-                const link = createElement('a', null, {
-                    href: sanitizeUrl(url),
-                    download: ''
-                });
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                indicator.classList.remove('active');
-                indicator.querySelector('.download-spinner').style.display = 'none';
-            } catch (error) {
-                console.error('Download failed:', error);
-                alert('Download failed.');
-                indicator.classList.remove('active');
-                indicator.querySelector('.download-spinner').style.display = 'none';
-            }
-        }
 
         function sanitizeUrl(url) {
             const sanitized = url.trim();

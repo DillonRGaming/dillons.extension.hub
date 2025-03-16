@@ -12,9 +12,9 @@ class WebBlocks {
 
       blocks: [
         {
-          opcode: 'runHTML',
+          opcode: 'displayHTML',
           blockType: Scratch.BlockType.COMMAND,
-          text: 'run HTML [HTML]',
+          text: 'display HTML [HTML]',
           arguments: {
             HTML: {
               type: Scratch.ArgumentType.STRING,
@@ -26,9 +26,9 @@ class WebBlocks {
           color3: '#9f3417',
         },
         {
-          opcode: 'runCSS',
+          opcode: 'displayCSS',
           blockType: Scratch.BlockType.COMMAND,
-          text: 'run CSS [CSS]',
+          text: 'display CSS [CSS]',
           arguments: {
             CSS: {
               type: Scratch.ArgumentType.STRING,
@@ -84,7 +84,7 @@ class WebBlocks {
     }
   }
 
-  runHTML(args) {
+  displayHTML(args) {
     this._ensureContainer();
     if (this.container) {
       this.container.innerHTML = args.HTML;
@@ -92,7 +92,7 @@ class WebBlocks {
     }
   }
 
-  runCSS(args) {
+  displayCSS(args) {
     this._ensureContainer();
     if (this.container) {
       const existingStyle = this.container.querySelector('style');

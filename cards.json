@@ -15,13 +15,13 @@
         "id": "FormatNumbers",
         "title": "FormatNumbers",
         "image": "images/FormatNumbers.png",
-        "backgroundColor": "#8E4198",
-        "borderColor": "#703079",
+        "backgroundColor": "#419873",
+        "borderColor": "#277B58",
         "download": "files/FormatNumbers.js",
-        "credit": "DogeisCut, Dillon",
+        "credit": "DogeisCut",
         "creditLinks": ["https://github.com/DogeisCut", null],
         "description": "Formats numbers to a readable format.",
-        "hoverColor": "#AA66B3"
+        "hoverColor": "#5DC895"
     },
     {
         "id": "Parasite",
