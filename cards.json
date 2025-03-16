@@ -1,76 +1,76 @@
 [
     {
-        "id": "GeminiGo",
-        "title": "GeminiGo",
-        "image": "images/GeminiGo.png",
-        "backgroundColor": "#333333",
-        "borderColor": "#222222",
-        "download": "files/GeminiGo.js",
-        "credit": "Dillon",
-        "creditLinks": [null],
-        "description": "integration for accessing Google Gemini.",
-        "hoverColor": "#555555"
-    },
-    {
         "id": "FormatNumbers",
         "title": "FormatNumbers",
+        "description": "Formats numbers to a readable format.",
         "image": "images/FormatNumbers.png",
         "backgroundColor": "#419873",
         "borderColor": "#277B58",
+        "hoverColor": "#5DC895",
         "download": "files/FormatNumbers.js",
         "credit": "DogeisCut",
-        "creditLinks": ["https://github.com/DogeisCut", null],
-        "description": "Formats numbers to a readable format.",
-        "hoverColor": "#5DC895"
+        "creditLinks": ["https://github.com/DogeisCut", null]
     },
     {
-        "id": "Parasite",
-        "title": "Parasite",
-        "image": "images/Parasite.png",
-        "backgroundColor": "#C53131",
-        "borderColor": "#B22224",
-        "download": "files/Parasite.js",
+        "id": "GeminiGo",
+        "title": "GeminiGo",
+        "description": "integration for accessing Google Gemini.",
+        "image": "images/GeminiGo.png",
+        "backgroundColor": "#333333",
+        "borderColor": "#222222",
+        "hoverColor": "#555555",
+        "download": "files/GeminiGo.js",
         "credit": "Dillon",
-        "creditLinks": [null],
-        "description": "Allows releasing of sprites.",
-        "hoverColor": "#E55557",
-        "badge": ["unstable", "updated"]
-    },
-    {
-        "id": "WorldData",
-        "title": "WorldData",
-        "image": "images/WorldData.png",
-        "backgroundColor": "#32479A",
-        "borderColor": "#273C8E",
-        "download": "files/WorldData.js",
-        "credit": "Dillon",
-        "creditLinks": [null],
-        "description": "Outputs global data like population, capital city and more.",
-        "hoverColor": "#5566CC"
+        "creditLinks": [null]
     },
     {
         "id": "PangStats",
         "title": "PangStats",
+        "description": "Displays FPS, CPU usage, and frame time.",
         "image": "images/PangStats.png",
         "backgroundColor": "#4286f4",
         "borderColor": "#3569c4",
+        "hoverColor": "#6699FF",
         "download": "files/PangStats.js",
         "credit": "Dillon",
+        "creditLinks": [null]
+    },
+    {
+        "id": "Parasite",
+        "title": "Parasite",
+        "description": "Allows releasing of sprites.",
+        "image": "images/Parasite.png",
+        "backgroundColor": "#C53131",
+        "borderColor": "#B22224",
+        "hoverColor": "#E55557",
+        "download": "files/Parasite.js",
+        "credit": "Dillon",
         "creditLinks": [null],
-        "description": "Displays FPS, CPU usage, and frame time.",
-        "hoverColor": "#6699FF"
+        "badge": ["unstable", "updated"]
     },
     {
         "id": "WebBlocks",
         "title": "WebBlocks",
+        "description": "Allows running HTML, CSS, and JS.",
         "image": "images/WebBlocks.png",
         "backgroundColor": "#36454F",
         "borderColor": "#28333A",
+        "hoverColor": "#556067",
         "download": "files/WebBlocks.js",
         "credit": "Dillon",
         "creditLinks": [null],
-        "description": "Allows running HTML, CSS, and JS.",
-        "badge": ["new", "beta"],
-        "hoverColor": "#556067"
+        "badge": ["new", "beta"]
+    },
+    {
+        "id": "WorldData",
+        "title": "WorldData",
+        "description": "Outputs global data like population, capital city and more.",
+        "image": "images/WorldData.png",
+        "backgroundColor": "#32479A",
+        "borderColor": "#273C8E",
+        "hoverColor": "#5566CC",
+        "download": "files/WorldData.js",
+        "credit": "Dillon",
+        "creditLinks": [null]
     }
 ]

@@ -528,308 +528,186 @@
 
     <script>
         const grid = document.querySelector('.extensions-grid');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const errorMessage = document.getElementById('error-message');
+        const loading = document.getElementById('loading-indicator');
+        const errorMsg = document.getElementById('error-message');
         const noResults = document.getElementById('no-results');
         const searchInput = document.getElementById('search-input');
-        const clearSearch = document.getElementById('clear-search');
-        const styleElement = document.createElement('style');
-        document.head.appendChild(styleElement);
+        const clearBtn = document.getElementById('clear-search');
+        const styleEl = document.createElement('style');
+        document.head.appendChild(styleEl);
 
-        let cardsData = [];
+        let cardData = [];
         const CARDS_URL = 'cards.json';
         const BADGES_URL = 'badges.json';
         let badgeStyles = {};
 
-        function createElement(tag, classes, attributes = {}) {
-            const element = document.createElement(tag);
-            if (classes) {
-                (Array.isArray(classes) ? classes : [classes]).forEach(cls => element.classList.add(cls));
-            }
-            Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
-            return element;
-        }
+        const el = (tag, classes, attrs = {}) => {
+            const e = document.createElement(tag);
+            if (classes) [].concat(classes).forEach(cls => e.classList.add(cls));
+            Object.entries(attrs).forEach(([key, val]) => e.setAttribute(key, val));
+            return e;
+        };
 
-        function setupSearch() {
+        const setupSearch = () => {
             searchInput.addEventListener('input', () => {
                 const query = searchInput.value.trim().toLowerCase();
                 filterCards(query);
-                clearSearch.classList.toggle('visible', query.length > 0);
+                clearBtn.classList.toggle('visible', query.length > 0);
             });
-
-            clearSearch.addEventListener('click', () => {
+            const clear = () => {
                 searchInput.value = '';
-                clearSearch.classList.remove('visible');
+                clearBtn.classList.remove('visible');
                 filterCards('');
                 searchInput.focus();
-            });
+            };
+            clearBtn.addEventListener('click', clear);
+            clearBtn.addEventListener('keydown', e => ['Enter', ' '].includes(e.key) && (e.preventDefault(), clear()));
+        };
 
-            clearSearch.addEventListener('keydown', (event) => {
-                if (['Enter', ' '].includes(event.key)) {
-                    event.preventDefault();
-                    searchInput.value = '';
-                    clearSearch.classList.remove('visible');
-                    filterCards('');
-                    searchInput.focus();
-                }
-            });
-        }
-
-        function filterCards(query) {
-            if (!cardsData?.length) return;
-
+        const filterCards = query => {
+            if (!cardData?.length) return;
             grid.innerHTML = '';
-            let visibleCards = 0;
-
-            cardsData.forEach(card => {
+            let visibleCount = 0;
+            cardData.forEach(card => {
                 if (!query || card.title.toLowerCase().includes(query) || card.description?.toLowerCase().includes(query)) {
                     createCard(card);
-                    visibleCards++;
+                    visibleCount++;
                 }
             });
+            noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        };
 
-            noResults.style.display = visibleCards === 0 ? 'block' : 'none';
-        }
+        const createCard = card => {
+            if (!card.id || !card.title) return console.warn('Card missing fields:', card);
 
-        function createCard(card) {
-            if (!card.id || !card.title) {
-                console.warn('Card missing required fields:', card);
-                return null;
+            const cardEl = el('div', ['extension-card', card.id], { tabindex: '0', role: 'button', 'aria-label': `${card.title}. Click to download.` });
+            const titleEl = el('div', 'extension-title');
+            titleEl.textContent = card.title;
+            const imgEl = el('img', 'extension-image', { style: `background-color: ${validateColor(card.backgroundColor) || '#333'}; width: 100%; height: 100%;`, 'data-src': card.image, src: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' });
+            const creditEl = el('div', 'extension-credit');
+            if (card.credit) createCreditContent(creditEl, card);
+            const descBtn = el('div', 'description-button', { role: 'button', tabindex: '0', 'aria-label': 'Show description' });
+            descBtn.innerHTML = '<i class="material-icons" style="font-size: 1.1em;">info_outline</i>';
+            const descTextEl = el('div', 'description-text');
+            descTextEl.textContent = card.description || 'No description';
+            cardEl.append(titleEl, imgEl, descTextEl, descBtn);
+            if (card.credit) cardEl.appendChild(creditEl);
+            const badgesCont = el('div', 'badges-container');
+            [].concat(card.badge || []).forEach(badge => badgesCont.appendChild(createBadgeEl(badge)));
+            if ([].concat(card.badge || []).includes('removed')) {
+                cardEl.classList.add('removed');
+                cardEl.setAttribute('aria-label', `${card.title}. Not available.`);
             }
-
-            const cardElement = createElement('div', ['extension-card', card.id], {
-                tabindex: '0',
-                role: 'button',
-                'aria-label': `${card.title}. Click for more information.`
-            });
-
-            const titleElement = createElement('div', 'extension-title');
-            titleElement.textContent = card.title;
-            const imageElement = createElement('img', 'extension-image', {
-                style: `background-color: ${validateColor(card.backgroundColor) || '#333'}; width: 100%; height: 100%;`,
-                'data-src': card.image,
-                src: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
-            });
-
-            const creditElement = createElement('div', 'extension-credit');
-            if (card.credit) createCreditContent(creditElement, card);
-
-            const descriptionButton = createElement('div', 'description-button', {
-                role: 'button',
-                tabindex: '0',
-                'aria-label': 'Show description'
-            });
-            descriptionButton.innerHTML = '<i class="material-icons" style="font-size: 1.1em;">info_outline</i>';
-
-            const descriptionTextElement = createElement('div', 'description-text');
-            descriptionTextElement.textContent = card.description || 'No description available';
-
-
-            cardElement.appendChild(titleElement);
-            cardElement.appendChild(imageElement);
-            cardElement.appendChild(descriptionTextElement);
-            cardElement.appendChild(descriptionButton);
-
-
-            if (card.credit) cardElement.appendChild(creditElement);
-
-            const badgesContainer = createElement('div', 'badges-container');
-            const badges = Array.isArray(card.badge) ? card.badge : (card.badge ? [card.badge] : []);
-
-            badges.forEach(badge => badgesContainer.appendChild(createBadgeElement(badge)));
-
-            if (badges.includes('removed')) {
-                cardElement.classList.add('removed');
-                cardElement.setAttribute('aria-label', `${card.title}. This extension is no longer available.`);
-            }
-
-            cardElement.appendChild(badgesContainer);
-            grid.appendChild(cardElement);
-
+            cardEl.appendChild(badgesCont);
+            grid.appendChild(cardEl);
             addCardStyle(card);
-            setupCardEventListeners(cardElement, descriptionButton, descriptionTextElement, card);
+            setupCardEvents(cardEl, descBtn, descTextEl, card);
+            new IntersectionObserver(entries => entries.forEach(entry => entry.isIntersecting && (entry.target.src = entry.target.dataset.src, observer.unobserve(entry.target)))).observe(imgEl);
+            return cardEl;
+        };
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        observer.unobserve(img);
-                    }
-                });
-            });
-            observer.observe(imageElement);
-
-            return cardElement;
-        }
-
-        function createCreditContent(creditElement, card) {
-            const credits = card.credit.split(', ');
-            let creditHTML = '<span class="by-label">by </span>';
-
-            credits.forEach((credit, index) => {
+        const createCreditContent = (creditEl, card) => {
+            let html = '<span class="by-label">by </span>';
+            card.credit.split(', ').forEach((credit, index) => {
                 const link = card.creditLinks?.[index];
-                creditHTML += link
-                    ? `<span class="credit-name" style="margin: 0 3px;"><a href="${sanitizeUrl(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(credit)}</a></span>`
-                    : `<span class="credit-name" style="margin: 0 3px;">${escapeHtml(credit)}</span>`;
-                if (index < credits.length - 1) creditHTML += '<span class="credit-separator"> & </span>';
+                html += link ? `<span class="credit-name" style="margin: 0 3px;"><a href="${sanitizeUrl(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(credit)}</a></span>` : `<span class="credit-name" style="margin: 0 3px;">${escapeHtml(credit)}</span>`;
+                if (index < card.credit.split(', ').length - 1) html += '<span class="credit-separator"> & </span>';
             });
+            creditEl.innerHTML = html;
+            creditEl.querySelectorAll('a').forEach(a => a.addEventListener('click', e => e.stopPropagation()));
+        };
 
-            creditElement.innerHTML = creditHTML;
-            creditElement.querySelectorAll('a').forEach(linkElement => linkElement.addEventListener('click', (event) => event.stopPropagation()));
-        }
+        const addCardStyle = card => {
+            const bg = validateColor(card.backgroundColor) || '#333';
+            const border = validateColor(card.borderColor) || '#555';
+            const hoverBorder = validateColor(card.hoverColor) || getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
+            styleEl.textContent += `.${card.id} { background-color: ${bg}; border-color: ${border}; } .${card.id}:hover, .${card.id}:focus { border-color: ${hoverBorder}; }`;
+        };
 
-        function addCardStyle(card) {
-            const backgroundColor = validateColor(card.backgroundColor) || '#333333';
-            const borderColor = validateColor(card.borderColor) || '#555553';
-            const hoverBorderColor = validateColor(card.hoverColor) || getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
-
-            styleElement.textContent += `
-                .${card.id} { background-color: ${backgroundColor}; border-color: ${borderColor}; }
-                .${card.id}:hover, .${card.id}:focus { border-color: ${hoverBorderColor}; }
-            `;
-        }
-
-        function setupCardEventListeners(cardElement, descriptionButton, descriptionTextElement, card) {
-            let isDescriptionActive = false;
-
-            const deactivateDescription = () => {
-                if (isDescriptionActive) {
-                    descriptionTextElement.classList.remove('active');
-                    cardElement.classList.remove('description-active');
-                    isDescriptionActive = false;
-                }
-            }
-
-            cardElement.addEventListener('mouseleave', deactivateDescription);
-
-            cardElement.addEventListener('click', (event) => {
-                if (event.target.closest('a') || event.target === descriptionButton) return;
-                if (card.download) {
-                    window.open(sanitizeUrl(card.download), '_blank');
-                }
+        const setupCardEvents = (cardEl, descBtn, descTextEl, card) => {
+            let descActive = false;
+            const deactivateDesc = () => { descActive && (descTextEl.classList.remove('active'), cardEl.classList.remove('description-active'), descActive = false); };
+            cardEl.addEventListener('mouseleave', deactivateDesc);
+            cardEl.addEventListener('click', e => {
+                if (e.target.closest('a') || e.target === descBtn) return;
+                card.download && downloadFile(sanitizeUrl(card.download), `${card.title}.js`, cardEl);
             });
+            cardEl.addEventListener('keydown', e => ['Enter', ' '].includes(e.key) && (e.preventDefault(), !(e.target.closest('a') || e.target === descBtn) && card.download && downloadFile(sanitizeUrl(card.download), `${card.title}.js`, cardEl)));
+            descBtn.addEventListener('click', e => { e.stopPropagation(); descActive = !descActive; descTextEl.classList.toggle('active', descActive && card.description); cardEl.classList.toggle('description-active', descActive && card.description); });
+            descBtn.addEventListener('keydown', e => ['Enter', ' '].includes(e.key) && (e.preventDefault(), e.stopPropagation(), descActive = !descActive, descTextEl.classList.toggle('active', descActive && card.description), cardEl.classList.toggle('description-active', descActive && card.description)));
+        };
 
-            cardElement.addEventListener('keydown', (event) => {
-                if (['Enter', ' '].includes(event.key)) {
-                    event.preventDefault();
-                    if (event.target.closest('a') || event.target === descriptionButton) return;
-                    if (card.download) {
-                        window.open(sanitizeUrl(card.download), '_blank');
-                    }
-                }
-            });
+        const downloadFile = (url, filename, cardEl) => {
+            const link = el('a', null, { href: url, download: filename });
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            cardEl.blur();
+        };
 
-            descriptionButton.addEventListener('click', (event) => {
-                event.stopPropagation();
-                isDescriptionActive = !isDescriptionActive;
-                descriptionTextElement.classList.toggle('active', isDescriptionActive && card.description);
-                cardElement.classList.toggle('description-active', isDescriptionActive && card.description);
-            });
-
-            descriptionButton.addEventListener('keydown', (event) => {
-                if (['Enter', ' '].includes(event.key)) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    isDescriptionActive = !isDescriptionActive;
-                    descriptionTextElement.classList.toggle('active', isDescriptionActive && card.description);
-                    cardElement.classList.toggle('description-active', isDescriptionActive && card.description);
-                }
-            });
-        }
-
-
-        function sanitizeUrl(url) {
-            const sanitized = url.trim();
-            return sanitized.startsWith('javascript:') ? '#' : sanitized;
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function validateColor(color) {
+        const sanitizeUrl = url => url.trim().startsWith('javascript:') ? '#' : url.trim();
+        const escapeHtml = text => { // Corrected escapeHtml function
+            const tempDiv = el('div');
+            tempDiv.textContent = text;
+            return tempDiv.innerHTML;
+        };
+        const validateColor = color => {
             if (!color) return null;
-            const hexRegex = /^#([0-9A-F]{3}){1,2}$/i;
-            const rgbRegex = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/;
-            const rgbaRegex = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/;
-            const namedColors = ['black', 'silver', 'gray', 'white', 'maroon', 'red', 'purple', 'fuchsia',
-                'green', 'lime', 'olive', 'yellow', 'navy', 'blue', 'teal', 'aqua'];
-            return (hexRegex.test(color) || rgbRegex.test(color) || rgbaRegex.test(color) ||
-                namedColors.includes(color.toLowerCase())) ? color : null;
-        }
+            const hex = /^#([0-9A-F]{3}){1,2}$/i, rgb = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/, rgba = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/;
+            const named = ['black', 'silver', 'gray', 'white', 'maroon', 'red', 'purple', 'fuchsia', 'green', 'lime', 'olive', 'yellow', 'navy', 'blue', 'teal', 'aqua'];
+            return (hex.test(color) || rgb.test(color) || rgba.test(color) || named.includes(color.toLowerCase())) ? color : null;
+        };
 
-        async function loadCardData() {
+        const loadCardData = async () => {
             try {
-                const response = await fetch(CARDS_URL);
-                if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-                const cards = await response.json();
-                if (!Array.isArray(cards)) throw new Error('Invalid data format');
-                return cards;
+                const res = await fetch(CARDS_URL);
+                if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+                return await res.json();
             } catch (error) {
-                console.error('Failed to load cards:', error);
+                console.error('Load cards failed:', error);
                 throw error;
             }
-        }
+        };
 
-        async function loadBadgeData() {
+        const loadBadgeData = async () => {
             try {
-                const response = await fetch(BADGES_URL);
-                if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-                const badges = await response.json();
-                return badges;
+                const res = await fetch(BADGES_URL);
+                if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+                return await res.json() || {};
             } catch (error) {
-                console.error('Failed to load badges:', error);
+                console.error('Load badges failed:', error);
                 return {};
             }
-        }
+        };
+
+        const getBadgeIcon = badgeType => badgeStyles[badgeType.toLowerCase()]?.icon ? `<i class="material-icons" style="font-size: 0.8rem; vertical-align: middle; position: relative; top: -1px; margin-left: 2px;">${badgeStyles[badgeType.toLowerCase()].icon}</i>` : '';
+        const createBadgeEl = badgeType => {
+            const badgeEl = el('div', ['extension-badge']);
+            const config = badgeStyles[badgeType.toLowerCase()] || {};
+            badgeEl.style.borderWidth = '4px';
+            badgeEl.style.backgroundColor = config.backgroundColor || '#747474';
+            badgeEl.style.borderColor = config.badgeBorderColor || config.borderColor || '#3c3c3c';
+            if (config.color) badgeEl.style.color = config.color;
+            if (config.borderWidth) badgeEl.style.borderWidth = config.borderWidth;
+
+            badgeEl.innerHTML = badgeType + getBadgeIcon(badgeType);
+            return badgeEl;
+        };
 
 
-        function getBadgeIcon(badgeType) {
-            const badgeConfig = badgeStyles[badgeType.toLowerCase()];
-            return badgeConfig?.icon ? `<i class="material-icons" style="font-size: 0.8rem; vertical-align: middle; position: relative; top: -1px; margin-left: 2px;">${badgeConfig.icon}</i>` : '';
-        }
-
-
-        function createBadgeElement(badgeType) {
-            const badgeElement = createElement('div', ['extension-badge']);
-            const badgeConfig = badgeStyles[badgeType.toLowerCase()];
-
-            badgeElement.style.borderWidth = '4px';
-
-            if (badgeConfig) {
-                badgeElement.style.backgroundColor = badgeConfig.backgroundColor;
-                badgeElement.style.borderColor = badgeConfig.badgeBorderColor || badgeConfig.borderColor;
-                if (badgeConfig.color) badgeElement.style.color = badgeConfig.color;
-                if (badgeConfig.borderWidth) badgeElement.style.borderWidth = badgeConfig.borderWidth;
-            } else {
-                badgeElement.style.backgroundColor = '#747474';
-                badgeElement.style.borderColor = '#3c3c3c';
-            }
-
-            badgeElement.innerHTML = badgeType + getBadgeIcon(badgeType);
-            return badgeElement;
-        }
-
-
-        async function initApp() {
+        const initApp = async () => {
             try {
                 badgeStyles = await loadBadgeData();
-                cardsData = await loadCardData();
-                loadingIndicator.style.display = 'none';
-                if (!cardsData?.length) {
-                    grid.innerHTML = '<p>No extensions available.</p>';
-                    return;
-                }
+                cardData = await loadCardData();
+                loading.style.display = 'none';
+                if (!cardData?.length) return grid.innerHTML = '<p>No extensions available.</p>';
                 setupSearch();
                 filterCards('');
             } catch (error) {
-                loadingIndicator.style.display = 'none';
-                errorMessage.style.display = 'block';
+                loading.style.display = 'none';
+                errorMsg.style.display = 'block';
             }
-        }
+        };
 
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
