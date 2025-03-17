@@ -34,6 +34,26 @@
             }
           },
           {
+            opcode: 'cageAllSpritesButton',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'cage all sprites'
+          },
+
+          '---',
+
+          {
+            opcode: 'setParasiteSpeed',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'set parasite speed to [SPEED]',
+            arguments: {
+              SPEED: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 2
+              }
+            }
+          },
+
+          {
             opcode: 'setCloneOnBounce',
             blockType: Scratch.BlockType.COMMAND,
             text: 'clone on bounce [TOGGLE]',
@@ -46,20 +66,65 @@
             }
           },
           {
-            opcode: 'setParasiteSpeed',
+            opcode: 'setMaxClones',
             blockType: Scratch.BlockType.COMMAND,
-            text: 'set parasite speed to [SPEED]',
+            text: 'set max clones to [MAX_CLONES]',
             arguments: {
-              SPEED: {
+              MAX_CLONES: {
                 type: Scratch.ArgumentType.NUMBER,
-                defaultValue: 2
+                defaultValue: 50
+              }
+            }
+          },
+
+          '---',
+
+          {
+            opcode: 'setGhostedClones',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'ghosted clones [TOGGLE]',
+            arguments: {
+              TOGGLE: {
+                type: Scratch.ArgumentType.STRING,
+                menu: 'toggleMenu',
+                defaultValue: 'on'
               }
             }
           },
           {
-            opcode: 'cageAllSpritesButton',
-            blockType: Scratch.BlockType.BUTTON,
-            text: 'cage all sprites'
+            opcode: 'setClickToDelete',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'click to delete clones [TOGGLE]',
+            arguments: {
+              TOGGLE: {
+                type: Scratch.ArgumentType.STRING,
+                menu: 'toggleMenu',
+                defaultValue: 'on'
+              }
+            }
+          },
+          {
+            opcode: 'setDecayEnabled',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'decay [TOGGLE]',
+            arguments: {
+              TOGGLE: {
+                type: Scratch.ArgumentType.STRING,
+                menu: 'toggleMenu',
+                defaultValue: 'on'
+              }
+            }
+          },
+          {
+            opcode: 'setDecayTime',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'set decay time to [DECAY]',
+            arguments: {
+              DECAY: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 5
+              }
+            }
           }
         ],
         menus: {
@@ -78,28 +143,53 @@
     constructor() {
       this.parasites = new Map();
       this.cloneOnBounceEnabled = false;
+      this.clickToDeleteEnabled = false;
+      this.ghostedClonesEnabled = false;
+      this.decayEnabled = false;
+      this.decayTime = 5;
       this.lastCloneTime = 0;
       this.parasiteSpeed = 2;
+      this.cloneCooldown = 300;
+      this.maxClones = 50;
     }
 
     setCloneOnBounce(args) {
       this.cloneOnBounceEnabled = args.TOGGLE === 'on';
     }
 
+    setClickToDelete(args) {
+      this.clickToDeleteEnabled = args.TOGGLE === 'on';
+    }
+
+    setGhostedClones(args) {
+      this.ghostedClonesEnabled = args.TOGGLE === 'on';
+      this._updateCloneGhosted();
+    }
+
+    setDecayEnabled(args) {
+      this.decayEnabled = args.TOGGLE === 'on';
+    }
+
+    setDecayTime(args) {
+      this.decayTime = Math.max(0, Number(args.DECAY));
+    }
+
+    setMaxClones(args) {
+      this.maxClones = Math.max(1, Number(args.MAX_CLONES));
+    }
+
     setParasiteSpeed(args) {
-      this.parasiteSpeed = Math.max(0, Number(args.SPEED));
+      this.parasiteSpeed = Math.max(0.1, Number(args.SPEED));
       for (const spriteName of this.parasites.keys()) {
         const parasiteData = this.parasites.get(spriteName);
         if (parasiteData) {
           parasiteData.speed = this.parasiteSpeed;
-
           const angle = Math.random() * Math.PI * 2;
           const speed = this.parasiteSpeed * (0.8 + Math.random() * 0.4);
           parasiteData.targetVelocityX = Math.cos(angle) * speed;
           parasiteData.targetVelocityY = Math.sin(angle) * speed;
           parasiteData.velocityX = parasiteData.targetVelocityX;
           parasiteData.velocityY = parasiteData.targetVelocityY;
-
           parasiteData.clones.forEach(cloneData => {
             cloneData.speed = this.parasiteSpeed;
             const cloneAngle = Math.random() * Math.PI * 2;
@@ -120,11 +210,10 @@
       return sprites.length > 0 ? sprites : ['Sprite1'];
     }
 
-    releaseSprite(args, util) {
+    releaseSprite(args) {
       const spriteName = args.SPRITE;
       const sprite = this._getSpriteTarget(spriteName);
-      if (!sprite) return;
-      if (this.parasites.has(spriteName)) return;
+      if (!sprite || this.parasites.has(spriteName)) return;
       sprite.setVisible(false);
       const costumeDataURL = this._getCostumeDataURL(sprite);
       if (!costumeDataURL) {
@@ -133,12 +222,16 @@
       }
       const parasite = document.createElement('img');
       parasite.src = costumeDataURL;
-      parasite.style.position = 'fixed';
-      parasite.style.zIndex = '9999';
-      parasite.style.pointerEvents = 'none';
+      Object.assign(parasite.style, {
+        position: 'fixed',
+        zIndex: '9999',
+        pointerEvents: 'none'
+      });
       const { pixelWidth, pixelHeight } = this._calculateSpriteSize(sprite);
-      parasite.style.width = `${pixelWidth}px`;
-      parasite.style.height = `${pixelHeight}px`;
+      Object.assign(parasite.style, {
+        width: `${pixelWidth}px`,
+        height: `${pixelHeight}px`
+      });
       const canvas = document.querySelector('canvas');
       if (!canvas) {
         sprite.setVisible(true);
@@ -149,8 +242,12 @@
       const originY = canvasRect.top + (-sprite.y + 180) * (canvasRect.height / 360);
       const x = originX;
       const y = originY;
-      parasite.style.left = `${x}px`;
-      parasite.style.top = `${y}px`;
+      Object.assign(parasite.style, {
+        left: `${x}px`,
+        top: `${y}px`
+      });
+      const angle = Math.random() * Math.PI * 2;
+      const speed = this.parasiteSpeed * (0.8 + Math.random() * 0.4);
       const parasiteData = {
         element: parasite,
         sprite: sprite,
@@ -159,10 +256,10 @@
         state: 'wandering',
         x: x,
         y: y,
-        velocityX: 0,
-        velocityY: 0,
-        targetVelocityX: 0,
-        targetVelocityY: 0,
+        velocityX: Math.cos(angle) * speed,
+        velocityY: Math.sin(angle) * speed,
+        targetVelocityX: Math.cos(angle) * speed,
+        targetVelocityY: Math.sin(angle) * speed,
         direction: 1,
         width: pixelWidth,
         height: pixelHeight,
@@ -171,7 +268,12 @@
         nextDirectionChange: Math.random() * 2000 + 1000,
         clones: [],
         lastCloneTime: 0,
-        speed: this.parasiteSpeed
+        canClone: true,
+        speed: this.parasiteSpeed,
+        isClone: false,
+        originalOpacity: 1,
+        decayStartTime: null,
+        parentIsMainClone: false
       };
       this.parasites.set(spriteName, parasiteData);
       parasite.onload = () => {
@@ -185,7 +287,7 @@
       };
     }
 
-    cageSprite(args, util) {
+    cageSprite(args) {
       const spriteName = args.SPRITE;
       const parasiteData = this.parasites.get(spriteName);
       if (!parasiteData) return;
@@ -193,14 +295,14 @@
       parasiteData.targetVelocityX = 0;
       parasiteData.targetVelocityY = 0;
       this.parasites.set(spriteName, parasiteData);
-
       parasiteData.clones.forEach(cloneData => {
-        const clone = cloneData.element;
-        clone.style.transition = 'opacity 0.5s';
-        clone.style.opacity = 0;
+        Object.assign(cloneData.element.style, {
+          transition: 'opacity 0.5s',
+          opacity: 0
+        });
         setTimeout(() => {
-          if (clone.parentNode) {
-            clone.remove();
+          if (cloneData.element.parentNode) {
+            cloneData.element.remove();
           }
         }, 500);
       });
@@ -251,10 +353,20 @@
       return { pixelWidth, pixelHeight };
     }
 
+    _updateCloneGhosted() {
+      for (const spriteName of this.parasites.keys()) {
+        const parasiteData = this.parasites.get(spriteName);
+        if (parasiteData) {
+          parasiteData.clones.forEach(cloneData => {
+            cloneData.element.style.opacity = this.ghostedClonesEnabled ? 0.5 : 1;
+          });
+        }
+      }
+    }
+
     _startParasiteAnimation(spriteName) {
       let lastTime = performance.now();
       const animate = (currentTime) => {
-        const deltaTime = (currentTime - lastTime) / 16.67;
         lastTime = currentTime;
         const parasiteData = this.parasites.get(spriteName);
         if (!parasiteData) return;
@@ -269,7 +381,9 @@
           nextDirectionChange,
           lastCloneTime,
           clones,
-          speed: parasiteSpeed
+          speed: parasiteSpeed,
+          canClone,
+          isClone
         } = parasiteData;
         let {
           x, y,
@@ -280,7 +394,9 @@
           momentum
         } = parasiteData;
         const now = currentTime;
+
         if (state === 'wandering') {
+          momentum = 0.8 + Math.random() * 0.4;
           if (now > lastDirectionChange + nextDirectionChange) {
             const angle = Math.random() * Math.PI * 2;
             const speed = parasiteSpeed * (0.8 + Math.random() * 0.4);
@@ -295,8 +411,6 @@
             }
             lastDirectionChange = now;
             parasiteData.nextDirectionChange = Math.random() * 3500 + 1500;
-            momentum = 0.8 + Math.random() * 0.4;
-            parasiteData.momentum = momentum;
           }
           if (Math.random() < 0.002) {
             const boostAngle = Math.random() * Math.PI * 2;
@@ -311,8 +425,8 @@
               }
             }
           }
-          velocityX += (targetVelocityX - velocityX) * 0.07 * deltaTime * momentum;
-          velocityY += (targetVelocityY - velocityY) * 0.07 * deltaTime * momentum;
+          velocityX += (targetVelocityX - velocityX) * 0.1  * momentum;
+          velocityY += (targetVelocityY - velocityY) * 0.1  * momentum;
         } else if (state === 'returning') {
           const dx = originX - x;
           const dy = originY - y;
@@ -330,7 +444,7 @@
             }, 100);
             return;
           } else {
-            const returnSpeed = Math.min(distance * 0.05, 3) * deltaTime;
+            const returnSpeed = Math.min(distance * 0.05, 3) ;
             const angle = Math.atan2(dy, dx);
             targetVelocityX = Math.cos(angle) * returnSpeed;
             targetVelocityY = Math.sin(angle) * returnSpeed;
@@ -339,8 +453,8 @@
               direction = newDirection;
               parasite.style.transform = direction > 0 ? 'scaleX(1)' : 'scaleX(-1)';
             }
-            velocityX += (targetVelocityX - velocityX) * 0.15 * deltaTime;
-            velocityY += (targetVelocityY - velocityY) * 0.15 * deltaTime;
+            velocityX += (targetVelocityX - velocityX) * 0.15 ;
+            velocityY += (targetVelocityY - velocityY) * 0.15 ;
           }
         }
         const viewportWidth = window.innerWidth;
@@ -348,11 +462,12 @@
         let cloned = false;
         if (!parasiteData.isClone) {
           if (x < 0) {
-            if (this.cloneOnBounceEnabled && !cloned && (currentTime - parasiteData.lastCloneTime > 1000)) {
+            if (this.cloneOnBounceEnabled && canClone && (currentTime - parasiteData.lastCloneTime > this.cloneCooldown)) {
               x = parasiteWidth * 0.2;
               this._cloneParasite(parasiteData, x, y);
-              cloned = true;
               parasiteData.lastCloneTime = currentTime;
+              parasiteData.canClone = false;
+              cloned = true;
             }
             x = 0;
             targetVelocityX = Math.abs(targetVelocityX);
@@ -360,11 +475,12 @@
             direction = 1;
             parasite.style.transform = 'scaleX(1)';
           } else if (x > viewportWidth - parasiteWidth) {
-            if (this.cloneOnBounceEnabled && !cloned && (currentTime - parasiteData.lastCloneTime > 1000)) {
+            if (this.cloneOnBounceEnabled && canClone && (currentTime - parasiteData.lastCloneTime > this.cloneCooldown)) {
               x = viewportWidth - parasiteWidth * 0.8;
               this._cloneParasite(parasiteData, x, y);
-              cloned = true;
               parasiteData.lastCloneTime = currentTime;
+              parasiteData.canClone = false;
+              cloned = true;
             }
             x = viewportWidth - parasiteWidth;
             targetVelocityX = -Math.abs(targetVelocityX);
@@ -373,33 +489,38 @@
             parasite.style.transform = 'scaleX(-1)';
           }
           if (y < 0) {
-            if (this.cloneOnBounceEnabled && !cloned && (currentTime - parasiteData.lastCloneTime > 1000)) {
+            if (this.cloneOnBounceEnabled && canClone && (currentTime - parasiteData.lastCloneTime > this.cloneCooldown)) {
               y = parasiteHeight * 0.2;
               this._cloneParasite(parasiteData, x, y);
-              cloned = true;
               parasiteData.lastCloneTime = currentTime;
+              parasiteData.canClone = false;
+              cloned = true;
             }
             y = 0;
             targetVelocityY = Math.abs(targetVelocityY);
             velocityY = Math.abs(velocityY) * 0.5;
           } else if (y > viewportHeight - parasiteHeight) {
-            if (this.cloneOnBounceEnabled && !cloned && (currentTime - parasiteData.lastCloneTime > 1000)) {
+            if (this.cloneOnBounceEnabled && canClone && (currentTime - parasiteData.lastCloneTime > this.cloneCooldown)) {
               y = viewportHeight - parasiteHeight * 0.8;
               this._cloneParasite(parasiteData, x, y);
-              cloned = true;
               parasiteData.lastCloneTime = currentTime;
+              parasiteData.canClone = false;
+              cloned = true;
             }
             y = viewportHeight - parasiteHeight;
             targetVelocityY = -Math.abs(targetVelocityY);
             velocityY = -Math.abs(velocityY) * 0.5;
           }
         }
-        x += velocityX * deltaTime;
-        y += velocityY * deltaTime;
-
-
-        parasite.style.left = `${x}px`;
-        parasite.style.top = `${y}px`;
+        if (!cloned) {
+          parasiteData.canClone = true;
+        }
+        x += velocityX ;
+        y += velocityY ;
+        Object.assign(parasite.style, {
+          left: `${x}px`,
+          top: `${y}px`
+        });
 
         parasiteData.clones.forEach(cloneData => {
           let {
@@ -411,11 +532,39 @@
             lastDirectionChange: cloneLastDirectionChange,
             momentum: cloneMomentum,
             nextDirectionChange: cloneNextDirectionChange,
-            speed: parasiteSpeed
+            speed: parasiteSpeed,
+            decayStartTime: cloneDecayStartTime
           } = cloneData;
-          let cloneState = 'wandering';
           let now = currentTime;
 
+          if (this.decayEnabled && cloneDecayStartTime === null) {
+            cloneData.decayStartTime = now;
+          }
+
+          if (this.decayEnabled && cloneDecayStartTime !== null) {
+            const decayDuration = this.decayTime * 1000;
+            if (now - cloneDecayStartTime > decayDuration) {
+              Object.assign(cloneParasite.style, {
+                transition: 'opacity 0.5s',
+                opacity: 0
+              });
+              setTimeout(() => {
+                if (cloneParasite.parentNode) {
+                  cloneParasite.remove();
+                  const index = parasiteData.clones.indexOf(cloneData);
+                  if (index > -1) {
+                    parasiteData.clones.splice(index, 1);
+                  }
+                }
+              }, 500);
+              return;
+            }
+          }
+
+          cloneParasite.style.opacity = this.ghostedClonesEnabled ? 0.5 : 1;
+
+
+          cloneMomentum = 0.8 + Math.random() * 0.4;
           if (now > cloneLastDirectionChange + cloneNextDirectionChange) {
             const angle = Math.random() * Math.PI * 2;
             const speed = parasiteSpeed * (0.8 + Math.random() * 0.4);
@@ -430,8 +579,6 @@
             }
             cloneLastDirectionChange = now;
             cloneData.nextDirectionChange = Math.random() * 3500 + 1500;
-            cloneMomentum = 0.8 + Math.random() * 0.4;
-            cloneData.momentum = cloneMomentum;
           }
           if (Math.random() < 0.002) {
             const boostAngle = Math.random() * Math.PI * 2;
@@ -446,9 +593,8 @@
               }
             }
           }
-          cloneVelocityX += (cloneTargetVelocityX - cloneVelocityX) * 0.07 * deltaTime * cloneMomentum;
-          cloneVelocityY += (cloneTargetVelocityY - cloneVelocityY) * 0.07 * deltaTime * cloneMomentum;
-
+          cloneVelocityX += (cloneTargetVelocityX - cloneVelocityX) * 0.1  * cloneMomentum;
+          cloneVelocityY += (cloneTargetVelocityY - cloneVelocityY) * 0.1  * cloneMomentum;
 
           if (cloneX < 0) {
             cloneX = 0;
@@ -472,26 +618,27 @@
             cloneTargetVelocityY = -Math.abs(cloneTargetVelocityY);
             cloneVelocityY = -Math.abs(cloneVelocityY) * 0.5;
           }
+          cloneX += cloneVelocityX;
+          cloneY += cloneVelocityY;
 
-          cloneX += cloneVelocityX * deltaTime;
-          cloneY += cloneVelocityY * deltaTime;
+          Object.assign(cloneData, {
+            x: cloneX,
+            y: cloneY,
+            velocityX: cloneVelocityX,
+            velocityY: cloneVelocityY,
+            targetVelocityX: cloneTargetVelocityX,
+            targetVelocityY: cloneTargetVelocityY,
+            direction: cloneDirection,
+            lastDirectionChange: cloneLastDirectionChange
+          });
 
-          cloneData.x = cloneX;
-          cloneData.y = cloneY;
-          cloneData.velocityX = cloneVelocityX;
-          cloneData.velocityY = cloneVelocityY;
-          cloneData.targetVelocityX = cloneTargetVelocityX;
-          cloneData.targetVelocityY = cloneTargetVelocityY;
-          cloneData.direction = cloneDirection;
-          cloneData.lastDirectionChange = cloneLastDirectionChange;
-
-          cloneParasite.style.left = `${cloneX}px`;
-          cloneParasite.style.top = `${cloneY}px`;
+          Object.assign(cloneParasite.style, {
+            left: `${cloneX}px`,
+            top: `${cloneY}px`
+          });
         });
 
-
-        this.parasites.set(spriteName, {
-          ...parasiteData,
+        Object.assign(this.parasites.get(spriteName), {
           x,
           y,
           velocityX,
@@ -500,7 +647,9 @@
           targetVelocityY,
           direction,
           lastDirectionChange,
-          lastCloneTime
+          lastCloneTime,
+          canClone: parasiteData.canClone,
+          momentum
         });
         requestAnimationFrame(animate);
       };
@@ -508,20 +657,26 @@
     }
 
     _cloneParasite(parasiteData, x, y) {
+      if (this.maxClones > 0 && parasiteData.clones.length >= this.maxClones) {
+        return;
+      }
+
       const { element: originalParasite } = parasiteData;
       const cloneParasite = originalParasite.cloneNode(true);
-      cloneParasite.style.position = 'fixed';
-      cloneParasite.style.zIndex = '9998';
-      cloneParasite.style.pointerEvents = 'none';
-      cloneParasite.style.left = `${x}px`;
-      cloneParasite.style.top = `${y}px`;
-      cloneParasite.style.opacity = 0;
-      cloneParasite.style.transition = 'opacity 0.2s';
+      Object.assign(cloneParasite.style, {
+        position: 'fixed',
+        zIndex: '9998',
+        pointerEvents: 'auto',
+        left: `${x}px`,
+        top: `${y}px`,
+        opacity: 0,
+        transition: 'opacity 0.5s'
+      });
+
       document.body.appendChild(cloneParasite);
       setTimeout(() => {
         cloneParasite.style.opacity = 1;
       }, 10);
-
 
       const cloneData = {
         element: cloneParasite,
@@ -537,7 +692,25 @@
         nextDirectionChange: Math.random() * 2000 + 1000,
         isClone: true,
         lastCloneTime: 0,
-        speed: parasiteData.speed
+        speed: parasiteData.speed,
+        width: parasiteData.width,
+        height: parasiteData.height,
+        decayStartTime: this.decayEnabled ? performance.now() : null
+      };
+      cloneParasite.onclick = () => {
+        Object.assign(cloneParasite.style, {
+          transition: 'opacity 0.5s',
+          opacity: 0
+        });
+        setTimeout(() => {
+          if (cloneParasite.parentNode) {
+            cloneParasite.remove();
+            const index = parasiteData.clones.indexOf(cloneData);
+            if (index > -1) {
+              parasiteData.clones.splice(index, 1);
+            }
+          }
+        }, 500);
       };
       parasiteData.clones.push(cloneData);
     }

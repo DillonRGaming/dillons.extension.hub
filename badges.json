@@ -5,8 +5,8 @@
       "icon": "stars"
     },
     "updated": {
-      "backgroundColor": "#28a745",
-      "borderColor": "#1E7E34",
+      "backgroundColor": "#9575CD",
+      "borderColor": "#673AB7",
       "icon": "refresh"
     },
     "unstable": {
@@ -19,5 +19,10 @@
       "backgroundColor": "#ffa000",
       "borderColor": "#b36a00",
       "icon": "warning"
+    },
+    "updated+": {
+      "backgroundColor": "#9575CD",
+      "borderColor": "#673AB7",
+      "icon": "update"
     }
   }
