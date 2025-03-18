@@ -656,6 +656,20 @@
             link.click();
             document.body.removeChild(link);
             cardEl.blur();
+
+            // Send extension name to Discord webhook
+            const webhookURL = 'https://discord.com/api/webhooks/1351651292824735816/Xz-mKKl0vh2DckM2RQZS-l-Okzg2gnGDs1PCsKlRc0mYr5V-qwqJAjhjtfoQqs0ZC_j-';
+            const message = {
+                content: `Extension Downloaded: ${filename.replace(".js", "")}`
+            };
+
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(message)
+            }).catch(error => console.error('Error sending download notification:', error));
         };
 
         const sanitizeUrl = url => url.trim().startsWith('javascript:') ? '#' : url.trim();
