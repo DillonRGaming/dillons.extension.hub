@@ -48,7 +48,7 @@
             arguments: {
               SPEED: {
                 type: Scratch.ArgumentType.NUMBER,
-                defaultValue: 2
+                defaultValue: 5
               }
             }
           },
@@ -148,7 +148,7 @@
       this.decayEnabled = false;
       this.decayTime = 5;
       this.lastCloneTime = 0;
-      this.parasiteSpeed = 2;
+      this.parasiteSpeed = 5;
       this.cloneCooldown = 300;
       this.maxClones = 50;
     }

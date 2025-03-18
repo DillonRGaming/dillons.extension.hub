@@ -140,9 +140,8 @@
 
         .extension-card {
             width: 100%;
-            /* padding-bottom: 56.25%;  REMOVED */
-            display: flex; /* ADDED */
-            flex-direction: column; /* ADDED */
+            display: flex;
+            flex-direction: column;
             border-radius: var(--card-border-radius);
             position: relative;
             overflow: hidden;
@@ -217,9 +216,6 @@
         }
 
         .extension-card>*:not(.badges-container, .description-button) {
-            /* position: absolute; REMOVED */
-            /* top: 0; REMOVED */
-            /* left: 0; REMOVED */
             width: 100%;
             height: 100%;
             display: flex;
@@ -232,15 +228,13 @@
         .extension-card>.extension-credit {
             height: auto;
             align-items: flex-end;
-            /* top: auto; REMOVED */
-            /* bottom: 10px; REMOVED */
             padding: 5px;
             overflow: hidden;
             letter-spacing: 0.6px;
             word-break: break-word;
-            position: absolute; /* ADDED */
-            bottom: 0; /* ADDED */
-            left: 0; /* ADDED */
+            position: absolute;
+            bottom: 0;
+            left: 0;
         }
 
         .extension-title {
@@ -250,9 +244,9 @@
             font-size: 1.1em;
             text-align: center;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            position: absolute; /* ADDED */
-            top: 0; /* ADDED */
-            left: 0; /* ADDED */
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .extension-card.description-active .extension-title {
@@ -264,13 +258,13 @@
             z-index: 1;
             border-radius: 10px;
             object-fit: cover;
-            object-position: center; /* ADDED: Center image within cropped area */
+            object-position: center;
             transition: opacity 0.2s ease-out, filter 0.2s ease-out;
             image-rendering: -webkit-optimize-contrast;
-            position: relative; /* ADDED */
-            height: 70%; /* ADDED */
-            width: 100%; /* ADDED */
-            top: 0; /* ADDED */
+            position: relative;
+            height: 70%;
+            width: 100%;
+            top: 0;
         }
 
         .extension-credit {
@@ -384,7 +378,6 @@
 
             .extension-card {
                 font-size: 1em;
-                /* padding-bottom: 66%; REMOVED */
             }
 
             :root {
@@ -421,7 +414,6 @@
 
             .extension-card {
                 font-size: 0.9em;
-                /* padding-bottom: 75%; REMOVED */
             }
 
             :root {
