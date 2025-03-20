@@ -674,3 +674,70 @@
 
         const sanitizeUrl = url => url.trim().startsWith('javascript:') ? '#' : url.trim();
         const escapeHtml = text => {
+            const tempDiv = el('div');
+            tempDiv.textContent = text;
+            return tempDiv.innerHTML;
+        };
+        const validateColor = color => {
+            if (!color) return null;
+            const hex = /^#([0-9A-F]{3}){1,2}$/i, rgb = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/, rgba = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/;
+            const named = ['black', 'silver', 'gray', 'white', 'maroon', 'red', 'purple', 'fuchsia', 'green', 'lime', 'olive', 'yellow', 'navy', 'blue', 'teal', 'aqua'];
+            return (hex.test(color) || rgb.test(color) || rgba.test(color) || named.includes(color.toLowerCase())) ? color : null;
+        };
+
+        const loadCardData = async () => {
+            try {
+                const res = await fetch(CARDS_URL);
+                if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+                return await res.json();
+            } catch (error) {
+                console.error('Load cards failed:', error);
+                throw error;
+            }
+        };
+
+        const loadBadgeData = async () => {
+            try {
+                const res = await fetch(BADGES_URL);
+                if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+                return await res.json() || {};
+            } catch (error) {
+                console.error('Load badges failed:', error);
+                return {};
+            }
+        };
+
+        const getBadgeIcon = badgeType => badgeStyles[badgeType.toLowerCase()]?.icon ? `<i class="material-icons" style="font-size: 0.8rem; vertical-align: middle; position: relative; top: -1px; margin-left: 2px;">${badgeStyles[badgeType.toLowerCase()].icon}</i>` : '';
+        const createBadgeEl = badgeType => {
+            const badgeEl = el('div', ['extension-badge']);
+            const config = badgeStyles[badgeType.toLowerCase()] || {};
+            badgeEl.style.borderWidth = '4px';
+            badgeEl.style.backgroundColor = config.backgroundColor || '#747474';
+            badgeEl.style.borderColor = config.badgeBorderColor || config.borderColor || '#3c3c3c';
+            if (config.color) badgeEl.style.color = config.color;
+            if (config.borderWidth) badgeEl.style.borderWidth = config.borderWidth;
+
+            badgeEl.innerHTML = badgeType + getBadgeIcon(badgeType);
+            return badgeEl;
+        };
+
+
+        const initApp = async () => {
+            try {
+                badgeStyles = await loadBadgeData();
+                cardData = await loadCardData();
+                loading.style.display = 'none';
+                if (!cardData?.length) return grid.innerHTML = '<p>No extensions available.</p>';
+                setupSearch();
+                filterCards('');
+            } catch (error) {
+                loading.style.display = 'none';
+                errorMsg.style.display = 'block';
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+
+</html>
