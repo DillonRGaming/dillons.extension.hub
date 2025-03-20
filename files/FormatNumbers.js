@@ -116,8 +116,8 @@
       return {
         id: "formatNumbers",
         name: "FormatNumbers",
-        color1: "#8E4198",
-        color2: "#703079",
+        color1: "#419873",
+        color2: "#277B58",
         blocks: [
           {
             opcode: "formatNumber",

@@ -96,5 +96,12 @@
       "color": "white",
       "icon": "tune",
       "tooltip": "Needs optimization"
+    },
+    "needs": {
+      "backgroundColor": "#333377",
+      "borderColor": "#222244",
+      "color": "white",
+      "icon": "wifi",
+      "tooltip": "Needs"
     }
   }
