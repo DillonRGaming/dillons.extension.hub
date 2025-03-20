@@ -2,15 +2,15 @@
     {
         "id": "GeminiGo",
         "title": "GeminiGo",
-        "description": "integration for accessing Google Gemini.",
+        "description": "Integration for accessing Google Gemini.",
         "image": "images/GeminiGo.png",
         "backgroundColor": "#333333",
         "borderColor": "#222222",
         "hoverColor": "#555555",
         "download": "files/GeminiGo.js",
-        "credit": "Dillon",
-        "creditLinks": [null],
-        "badge": ["needs"]
+        "credit": "Dillon, 𝓴𝓲𝓼𝓾𝓾",
+        "creditLinks": [null, null],
+        "badge": ["updated", "needs"]
     },
     {
         "id": "FormatNumbers",

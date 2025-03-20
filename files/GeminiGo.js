@@ -16,12 +16,12 @@
             return {
                 id: "geminiGo",
                 name: "GeminiGo",
-                color1: "#333333",
-                color2: "#333333",
+                color1: "#262626",
+                color2: "#262626",
                 blocks: [
                     {
                         opcode: "setApiKey",
-                        text: "set API key to [API_KEY]",
+                        text: "set api key to [API_KEY]",
                         blockType: Scratch.BlockType.COMMAND,
                         arguments: {
                             API_KEY: {
@@ -32,12 +32,12 @@
                     },
                     {
                         opcode: "useDefaultApiKey",
-                        text: "use default API key",
+                        text: "use default api key",
                         blockType: Scratch.BlockType.COMMAND,
                     },
                     {
                         opcode: "askGemini",
-                        text: "ask Gemini (No Memory) [QUESTION]",
+                        text: "ask gemini (no memory) [QUESTION]",
                         blockType: Scratch.BlockType.REPORTER,
                         arguments: {
                             QUESTION: {
@@ -45,6 +45,21 @@
                                 defaultValue: "What is AI?"
                             }
                         }
+                    },
+                    {
+                        opcode: "askGeminiWithPrompt",
+                        text: "ask gemini (no memory) prompt: [PROMPT] question: [QUESTION]",
+                        blockType: Scratch.BlockType.REPORTER,
+                        arguments: {
+                            PROMPT: {
+                                type: Scratch.ArgumentType.STRING,
+                                defaultValue: "Be short and concise",
+                            },
+                            QUESTION: {
+                                type: Scratch.ArgumentType.STRING,
+                                defaultValue: "What is AI?",
+                            },
+                        },
                     },
                     {
                         opcode: "setPrompt",
@@ -89,6 +104,35 @@
         async askGemini(args) {
             const question = args.QUESTION;
             const prompt = customPrompt;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: `${prompt} ${question}` }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                if (data.candidates && data.candidates.length > 0) {
+                    return data.candidates[0].content.parts[0].text;
+                } else {
+                    return "Error: No response from Gemini.";
+                }
+            } catch (error) {
+                console.error("Error fetching data from Gemini:", error);
+                return "Error: Unable to contact Gemini.";
+            }
+        }
+
+        async askGeminiWithPrompt(args) {
+            const question = args.QUESTION;
+            const prompt = args.PROMPT;
 
             try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`, {
