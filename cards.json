@@ -10,7 +10,7 @@
         "download": "files/GeminiGo.js",
         "credit": "Dillon, 𝓴𝓲𝓼𝓾𝓾",
         "creditLinks": [null, null],
-        "badge": ["updated", "needs"]
+        "badge": ["needs"]
     },
     {
         "id": "FormatNumbers",
@@ -73,7 +73,7 @@
         "download": "files/PenguinPeer.js",
         "credit": "Dillon",
         "creditLinks": [null],
-        "badge": ["needs", "new"]
+        "badge": ["needs"]
     },
     {
         "id": "reorder",
@@ -86,7 +86,7 @@
         "download": "files/ReOrder.js",
         "credit": "Dillon",
         "creditLinks": [null],
-        "badge": ["unstable", "new"]
+        "badge": ["unstable"]
     },
     {
         "id": "ddededodediamante",
@@ -99,6 +99,6 @@
         "download": "files/ddededodediamante.js",
         "credit": "ddededodediamante",
         "creditLinks": [null],
-        "badge": []
+        "badge": ["new"]
     }
 ]
