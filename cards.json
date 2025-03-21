@@ -87,5 +87,18 @@
         "credit": "Dillon",
         "creditLinks": [null],
         "badge": ["unstable", "new"]
+    },
+    {
+        "id": "ddededodediamante",
+        "title": "ddededodediamante",
+        "description": "ddededodediamante",
+        "image": "images/ddededodediamante.png",
+        "backgroundColor": "#eb459f",
+        "borderColor": "#c71c77",
+        "hoverColor": "#f165b3",
+        "download": "files/ddededodediamante.js",
+        "credit": "ddededodediamante",
+        "creditLinks": [null],
+        "badge": []
     }
 ]

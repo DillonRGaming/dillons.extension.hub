@@ -8,8 +8,11 @@
 
     const DEFAULT_API_KEY = "AIzaSyDvvjZyWTeocOIzR96ST6SGpok6_APMVjc";
     let apiKey = DEFAULT_API_KEY;
+    let backupApiKey = "";
     let customPrompt = "Be short and concise";
     let selectedModel = "gemini-2.0-flash";
+    let failCount = 0;
+    let useBackup = false;
 
     class GeminiGoExtension {
         getInfo() {
@@ -22,6 +25,17 @@
                     {
                         opcode: "setApiKey",
                         text: "set api key to [API_KEY]",
+                        blockType: Scratch.BlockType.COMMAND,
+                        arguments: {
+                            API_KEY: {
+                                type: Scratch.ArgumentType.STRING,
+                                defaultValue: ""
+                            }
+                        }
+                    },
+                    {
+                        opcode: "setBackupApiKey",
+                        text: "set backup api key to [API_KEY]",
                         blockType: Scratch.BlockType.COMMAND,
                         arguments: {
                             API_KEY: {
@@ -96,6 +110,11 @@
             console.log("API key set.");
         }
 
+        setBackupApiKey(args) {
+            backupApiKey = args.API_KEY;
+            console.log("Backup API key set.");
+        }
+
         useDefaultApiKey() {
             apiKey = DEFAULT_API_KEY;
             console.log("Using default API key.");
@@ -104,9 +123,10 @@
         async askGemini(args) {
             const question = args.QUESTION;
             const prompt = customPrompt;
+            let currentApiKey = useBackup ? backupApiKey : apiKey;
 
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`, {
+            const makeRequest = async (key) => {
+              const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${key}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -117,15 +137,56 @@
                         }]
                     })
                 });
+              return response;
+            }
+
+            try {
+                let response;
+
+                if (useBackup) {
+                  // Always try backup if we're using it
+                  response = await makeRequest(backupApiKey);
+                } else {
+                  response = await makeRequest(apiKey);
+                }
 
                 const data = await response.json();
+
                 if (data.candidates && data.candidates.length > 0) {
+                    failCount = 0;
+                    useBackup = false; // Reset to using the main API key
                     return data.candidates[0].content.parts[0].text;
                 } else {
+                    if (!useBackup) { // Only increment if we weren't already using backup
+                      failCount++;
+                    }
+
+                    if (failCount >= 2 && !useBackup) {
+                        useBackup = true;
+                        console.log("Switching to backup API key.");
+                        if (backupApiKey) {
+                          return this.askGemini(args); // Retry with backup
+                        } else {
+                          return "Error: No response and no backup API key set.";
+                        }
+
+                    }
                     return "Error: No response from Gemini.";
                 }
             } catch (error) {
                 console.error("Error fetching data from Gemini:", error);
+                if (!useBackup) {
+                  failCount++;
+                }
+                if (failCount >= 2 && !useBackup) {
+                    useBackup = true;
+                    console.log("Switching to backup API key.");
+                    if (backupApiKey) {
+                      return this.askGemini(args); // Retry with backup
+                    } else {
+                      return "Error: Unable to contact and no backup API key.";
+                    }
+                }
                 return "Error: Unable to contact Gemini.";
             }
         }
@@ -133,9 +194,10 @@
         async askGeminiWithPrompt(args) {
             const question = args.QUESTION;
             const prompt = args.PROMPT;
+            let currentApiKey = useBackup ? backupApiKey : apiKey;
 
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`, {
+            const makeRequest = async (key) => {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${key}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -146,15 +208,52 @@
                         }]
                     })
                 });
+                return response;
+            };
+
+            try {
+                let response;
+                if (useBackup) {
+                  response = await makeRequest(backupApiKey);
+                } else {
+                  response = await makeRequest(apiKey);
+                }
 
                 const data = await response.json();
                 if (data.candidates && data.candidates.length > 0) {
+                    failCount = 0;
+                    useBackup = false;
                     return data.candidates[0].content.parts[0].text;
                 } else {
+                  if (!useBackup) {
+                    failCount++;
+                  }
+                    if (failCount >= 2 && !useBackup) {
+                        useBackup = true;
+                        console.log("Switching to backup API key.");
+                        if (backupApiKey) {
+                          return this.askGeminiWithPrompt(args);
+                        } else {
+                          return "Error: No response and no backup API key set.";
+                        }
+                    }
                     return "Error: No response from Gemini.";
                 }
             } catch (error) {
                 console.error("Error fetching data from Gemini:", error);
+                if(!useBackup){
+                  failCount++;
+                }
+
+                if (failCount >= 2 && !useBackup) {
+                    useBackup = true;
+                    console.log("Switching to backup API key.");
+                    if (backupApiKey) {
+                      return this.askGeminiWithPrompt(args);
+                    } else {
+                      return "Error: Unable to contact and no backup API key.";
+                    }
+                }
                 return "Error: Unable to contact Gemini.";
             }
         }
