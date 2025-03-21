@@ -82,7 +82,7 @@
                         text: "set temperature to [TEMP]",
                         blockType: Scratch.BlockType.COMMAND,
                         arguments: {
-                            TEMP: { type: Scratch.ArgumentType.STRING, menu: "temperature_values", defaultValue: "0.7" }
+                            TEMP: { type: Scratch.ArgumentType.NUM, menu: "temperature_values", defaultValue: 0.7 }
                         }
                     }
                 ],
@@ -96,7 +96,20 @@
                         "gemini-1.5-pro-002",
                         "gemini-1.0-pro-vision"
                     ],
-                    temperature_values: ["0.0", "0.2", "0.4", "0.6", "0.8", "1.0", "1.2", "1.4", "1.6", "1.8", "2.0"]
+                    temperature_values: [
+                      {text: "0.0", value: 0.0},
+                      {text: "0.2", value: 0.2},
+                      {text: "0.4", value: 0.4},
+                      {text: "0.6", value: 0.6},
+                      {text: "0.7", value: 0.7},
+                      {text: "0.8", value: 0.8},
+                      {text: "1.0", value: 1.0},
+                      {text: "1.2", value: 1.2},
+                      {text: "1.4", value: 1.4},
+                      {text: "1.6", value: 1.6},
+                      {text: "1.8", value: 1.8},
+                      {text: "2.0", value: 2.0}
+                    ]
                 }
             };
         }
@@ -127,7 +140,7 @@
         }
 
         setTemperature(args) {
-            temperature = parseFloat(args.TEMP);
+            temperature = args.TEMP;
             console.log(`Temperature set to: ${temperature}`);
         }
 
@@ -147,7 +160,9 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: `${prompt} ${question}` }] }],
-                        temperature: temperature
+                        generationConfig: {
+                          temperature: temperature
+                        }
                     })
                 });
                 return response;
@@ -170,7 +185,7 @@
                     if (failCount >= 2 && !useBackup) {
                         useBackup = true;
                         console.log("Switching to backup API key.");
-                        return backupApiKey ? await makeRequest(backupApiKey) : "Error: No response and no backup API key set.";
+                        return backupApiKey ? await this.retryRequest(makeRequest, backupApiKey) : "Error: No response and no backup API key set.";
                     }
                     return "Error: No response from Gemini.";
                 }
@@ -180,9 +195,26 @@
                 if (failCount >= 2 && !useBackup) {
                     useBackup = true;
                     console.log("Switching to backup API key.");
-                    return backupApiKey ? await makeRequest(backupApiKey) : "Error: Unable to contact and no backup API key.";
+                    return backupApiKey ? await this.retryRequest(makeRequest, backupApiKey) : "Error: Unable to contact and no backup API key.";
                 }
                 return "Error: Unable to contact Gemini.";
+            }
+        }
+      
+        async retryRequest(makeRequest, key) {
+            try {
+                const response = await makeRequest(key);
+                const data = await response.json();
+                if (data.candidates && data.candidates.length > 0) {
+                    failCount = 0;
+                    useBackup = false;
+                    return data.candidates[0].content.parts[0].text;
+                } else {
+                    return "Error: No response from Gemini even with backup API key.";
+                }
+            } catch (error) {
+                console.error("Error fetching data from Gemini with backup API key:", error);
+                return "Error: Unable to contact Gemini with backup API key.";
             }
         }
     }
