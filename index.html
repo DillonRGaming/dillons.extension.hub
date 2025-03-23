@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +7,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --accent-color: #00bfff;
@@ -23,7 +22,7 @@
         body {
             background-color: var(--background-color);
             color: var(--text-color);
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Poppins', sans-serif;
             margin: 0 auto;
             padding: 25px;
             padding-left: 50px;
@@ -33,15 +32,21 @@
             max-width: 1400px;
         }
 
+        body.light-mode {
+            --background-color: #f9f9f9;
+            --text-color: #333;
+        }
+
         .header {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             margin-bottom: 50px;
         }
 
         .header-text {
             text-align: center;
+            flex-grow: 1;
         }
 
         .header-text h1 {
@@ -50,10 +55,39 @@
             font-size: 2.2em;
         }
 
+        body.light-mode .header-text h1 {
+            color: black;
+        }
+
+        .toggle-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .toggle-button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.5em;
+            opacity: 0.6;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .toggle-button:hover,
+        .toggle-button.active {
+            opacity: 1;
+        }
+
         .divider {
             margin: 20px 0;
             border: none;
             border-top: 1px solid #333;
+        }
+
+        body.light-mode .divider {
+            border-top: 1px solid #ccc;
         }
 
         .search-container {
@@ -61,18 +95,26 @@
             margin: 0 auto 25px auto;
             display: flex;
             position: relative;
+            align-items: center;
         }
 
         .search-input {
             width: 100%;
             padding: 12px 45px 12px 15px;
-            border: 1px solid #333;
+            border: 2px solid #333;
             border-radius: 25px;
             background-color: #1e1e1e;
             color: var(--text-color);
             font-size: 1.1rem;
             transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
         }
+
+        body.light-mode .search-input {
+            background-color: #fff;
+            border: 2px solid #ccc;
+            color: var(--text-color);
+        }
+
 
         .search-input:focus {
             outline: none;
@@ -86,7 +128,10 @@
             top: 50%;
             transform: translateY(-50%);
             color: #777;
-            cursor: pointer;
+        }
+
+        body.light-mode .search-icon {
+            color: #999;
         }
 
         .clear-search {
@@ -98,6 +143,10 @@
             cursor: pointer;
             opacity: 0;
             transition: opacity var(--transition-speed) ease;
+        }
+
+        body.light-mode .clear-search {
+            color: #999;
         }
 
         .clear-search.visible {
@@ -112,10 +161,18 @@
             display: none;
         }
 
+        body.light-mode .no-results {
+            color: #777;
+        }
+
         #loading-indicator {
             text-align: center;
             padding: 20px;
             font-size: 1.2em;
+        }
+
+        body.light-mode #loading-indicator {
+            color: #777;
         }
 
         #error-message {
@@ -128,6 +185,12 @@
             border-radius: 5px;
             font-size: 1.1em;
         }
+
+        body.light-mode #error-message {
+            color: #cc0000;
+            border-color: #cc0000;
+        }
+
 
         .extensions-grid {
             display: grid;
@@ -154,12 +217,15 @@
             transition: transform 0.2s ease-out, border-color 0.2s ease-out;
         }
 
+        body.light-mode .extension-card {
+            color: white !important;
+        }
+
         .extension-card:hover,
         .extension-card:focus {
             transform: scale(1.06);
             border-color: var(--accent-color);
             outline: none;
-            transition: transform 0.2s ease-out, border-color 0.2s ease-out;
         }
 
         .extension-card:active {
@@ -171,26 +237,26 @@
         .extension-card:focus .extension-image {
             opacity: 0.6;
             filter: blur(2px);
-            transition: opacity 0.2s ease-out, filter 0.2s ease-out;
         }
 
         .extension-card:hover .extension-title,
         .extension-card:focus .extension-title {
             opacity: 1;
-            transition: opacity 0.2s ease-out 0.1s;
         }
 
         .extension-card:hover .extension-credit,
         .extension-card:focus .extension-credit {
             opacity: 1;
-            transition: opacity 0.2s ease-out 0.1s;
         }
 
         .extension-card.removed {
             opacity: 0.7;
             cursor: default;
             pointer-events: none;
-            transition: opacity 0.2s ease-in-out;
+        }
+
+        body.light-mode .extension-card.removed {
+            opacity: 0.8;
         }
 
         .extension-card.removed:hover,
@@ -237,9 +303,9 @@
             left: 0;
         }
 
+
         .extension-title {
             opacity: 0;
-            transition: opacity 0.2s ease-out;
             z-index: 2;
             font-size: 1.1em;
             text-align: center;
@@ -247,6 +313,10 @@
             position: absolute;
             top: 0;
             left: 0;
+        }
+
+        body.light-mode .extension-title {
+            text-shadow: 2px 2px 4px rgba(150, 150, 150, 0.5);
         }
 
         .extension-card.description-active .extension-title {
@@ -259,7 +329,6 @@
             border-radius: 10px;
             object-fit: fill;
             object-position: center;
-            transition: opacity 0.2s ease-out, filter 0.2s ease-out;
             image-rendering: -webkit-optimize-contrast;
             position: relative;
             height: 70%;
@@ -272,7 +341,6 @@
             font-weight: bold;
             z-index: 3;
             opacity: 0;
-            transition: opacity 0.2s ease-out;
             box-sizing: border-box;
             border-radius: 4px;
             text-align: center;
@@ -289,6 +357,7 @@
             text-decoration: underline;
         }
 
+
         .description-button {
             position: absolute;
             top: 10px;
@@ -302,19 +371,21 @@
             cursor: pointer;
             z-index: 4;
             opacity: 0;
-            transition: opacity 0.2s ease-out;
         }
+
+        .description-button i {
+            color: white;
+        }
+
 
         .extension-card:hover .description-button,
         .extension-card:focus .description-button {
             opacity: 1;
-            transition: opacity 0.2s ease-out 0.1s;
         }
 
         .description-text {
             font-size: 0.75em;
             opacity: 0;
-            transition: opacity 0.2s ease-out;
             position: absolute;
             top: 0;
             left: 0;
@@ -331,6 +402,10 @@
             backdrop-filter: blur(3px);
             -webkit-backdrop-filter: blur(3px);
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        body.light-mode .description-text {
+            text-shadow: 2px 2px 4px rgba(150, 150, 150, 0.5);
         }
 
         .description-text.active {
@@ -447,6 +522,12 @@
             margin-bottom: 5px;
         }
 
+        body.light-mode .extension-badge {
+            color: #333;
+            background-color: #ddd;
+            border-color: #bbb;
+        }
+
         @keyframes pulse {
             0% {
                 transform: scale(1);
@@ -472,7 +553,6 @@
             gap: 4px;
             z-index: 5;
             transform-origin: top right;
-            transition: transform 0.2s ease-out;
             max-width: 90%;
             flex-wrap: wrap;
             justify-content: flex-end;
@@ -486,7 +566,6 @@
         .extension-card:hover .badges-container .extension-badge,
         .extension-card:focus .badges-container .extension-badge {
             opacity: 0;
-            transition: opacity var(--transition-speed) ease;
         }
 
 
@@ -513,13 +592,42 @@
             display: inline-block;
             font-weight: normal;
         }
+
+        .copy-popup {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border-width: var(--card-border-width);
+            border-style: solid;
+            border-color: var(--accent-color);
+            z-index: 1000;
+            opacity: 0.95;
+            transition: opacity var(--transition-speed) ease;
+            text-align: center;
+        }
+
+        body.light-mode .copy-popup {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
     </style>
 </head>
-
 <body>
     <div class="header">
         <div class="header-text">
             <h1>Dillon's Extension Hub</h1>
+        </div>
+
+		<div class="toggle-container">
+            <button id="mode-toggle" class="toggle-button" aria-label="Toggle light/dark mode"><span id="mode-toggle-icon" class="material-icons">dark_mode</span></button>
+            <button id="download-mode-toggle" class="toggle-button active" aria-label="Toggle download/copy mode">
+                <span id="download-mode-icon" class="material-icons">file_download</span>
+            </button>
         </div>
     </div>
 
@@ -553,6 +661,34 @@
         const CARDS_URL = 'cards.json';
         const BADGES_URL = 'badges.json';
         let badgeStyles = {};
+
+		const modeToggle = document.getElementById('mode-toggle');
+        const body = document.body;
+        let currentMode = localStorage.getItem('theme') || 'dark';
+        const modeToggleIcon = document.getElementById('mode-toggle-icon');
+
+        const downloadModeToggle = document.getElementById('download-mode-toggle');
+        const downloadModeIcon = document.getElementById('download-mode-icon');
+        let downloadMode = true;
+
+        const setMode = (mode) => {
+            if (mode === 'light') {
+                body.classList.add('light-mode');
+                modeToggleIcon.innerHTML = 'dark_mode';
+            } else {
+                body.classList.remove('light-mode');
+                modeToggleIcon.innerHTML = 'light_mode';
+            }
+            localStorage.setItem('theme', mode);
+            currentMode = mode;
+        };
+
+        modeToggle.addEventListener('click', () => {
+            setMode(currentMode === 'dark' ? 'light' : 'dark');
+        });
+
+        setMode(currentMode);
+
 
         const el = (tag, classes, attrs = {}) => {
             const e = document.createElement(tag);
@@ -593,10 +729,10 @@
         const createCard = card => {
             if (!card.id || !card.title) return console.warn('Card missing fields:', card);
 
-            const cardEl = el('div', ['extension-card', card.id], { tabindex: '0', role: 'button', 'aria-label': `${card.title}. Click to download.` });
+            const cardEl = el('div', ['extension-card', card.id], { tabindex: '0', role: 'button', 'aria-label': `${card.title}. Click to ${downloadMode ? 'download' : 'copy code'}.` });
             const titleEl = el('div', 'extension-title');
             titleEl.textContent = card.title;
-            const imgEl = el('img', 'extension-image', { style: `background-color: ${validateColor(card.backgroundColor) || '#333'}; width: 100%; height: 100%;`, 'data-src': card.image, src: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' });
+            const imgEl = el('img', 'extension-image', { style: `background-color: ${validateColor(card.backgroundColor) || '#333'};`, 'data-src': card.image, src: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' });
             const creditEl = el('div', 'extension-credit');
             if (card.credit) createCreditContent(creditEl, card);
             const descBtn = el('div', 'description-button', { role: 'button', tabindex: '0', 'aria-label': 'Show description' });
@@ -615,7 +751,12 @@
             grid.appendChild(cardEl);
             addCardStyle(card);
             setupCardEvents(cardEl, descBtn, descTextEl, card);
-            new IntersectionObserver(entries => entries.forEach(entry => entry.isIntersecting && (entry.target.src = entry.target.dataset.src, observer.unobserve(entry.target)))).observe(imgEl);
+            new IntersectionObserver((entries, observer) => entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.src = entry.target.dataset.src;
+                    observer.unobserve(entry.target);
+                }
+            })).observe(imgEl);
             return cardEl;
         };
 
@@ -639,15 +780,40 @@
 
         const setupCardEvents = (cardEl, descBtn, descTextEl, card) => {
             let descActive = false;
-            const deactivateDesc = () => { descActive && (descTextEl.classList.remove('active'), cardEl.classList.remove('description-active'), descActive = false); };
+            const deactivateDesc = () => { if (descActive) { descTextEl.classList.remove('active'); cardEl.classList.remove('description-active'); descActive = false; } };
             cardEl.addEventListener('mouseleave', deactivateDesc);
-            cardEl.addEventListener('click', e => {
+            cardEl.addEventListener('click', async e => {
                 if (e.target.closest('a') || e.target === descBtn) return;
-                card.download && downloadFile(sanitizeUrl(card.download), `${card.title}.js`, cardEl);
+                if (card.download) {
+                    if (downloadMode) {
+                        downloadFile(sanitizeUrl(card.download), `${card.title}.js`, cardEl);
+                    } else {
+                        await copyCodeToClipboard(sanitizeUrl(card.download), card.title, cardEl, card);
+                    }
+                }
             });
-            cardEl.addEventListener('keydown', e => ['Enter', ' '].includes(e.key) && (e.preventDefault(), !(e.target.closest('a') || e.target === descBtn) && card.download && downloadFile(sanitizeUrl(card.download), `${card.title}.js`, cardEl)));
+            cardEl.addEventListener('keydown', async e => {
+                if (['Enter', ' '].includes(e.key)) {
+                    e.preventDefault();
+                    if (!(e.target.closest('a') || e.target === descBtn) && card.download) {
+                        if (downloadMode) {
+                            downloadFile(sanitizeUrl(card.download), `${card.title}.js`, cardEl);
+                        } else {
+                            await copyCodeToClipboard(sanitizeUrl(card.download), card.title, cardEl, card);
+                        }
+                    }
+                }
+            });
             descBtn.addEventListener('click', e => { e.stopPropagation(); descActive = !descActive; descTextEl.classList.toggle('active', descActive && card.description); cardEl.classList.toggle('description-active', descActive && card.description); });
-            descBtn.addEventListener('keydown', e => ['Enter', ' '].includes(e.key) && (e.preventDefault(), e.stopPropagation(), descActive = !descActive, descTextEl.classList.toggle('active', descActive && card.description), cardEl.classList.toggle('description-active', descActive && card.description)));
+            descBtn.addEventListener('keydown', e => {
+                if (['Enter', ' '].includes(e.key)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    descActive = !descActive;
+                    descTextEl.classList.toggle('active', descActive && card.description);
+                    cardEl.classList.toggle('description-active', descActive && card.description)
+                }
+            });
         };
 
         const downloadFile = (url, filename, cardEl) => {
@@ -657,8 +823,7 @@
             document.body.removeChild(link);
             cardEl.blur();
 
-            // Send extension name to Discord webhook
-            const webhookURL = 'https://discord.com/api/webhooks/1352284705952759898/cfekV_vdJHFIHFkBWwbiZzaGhHKu6OeUHVq1XIs85341Xk2EYSecVGZSwNWv8r-VSTC-';
+            const webhookURL = 'https://discord.com/api/webhooks/1353248292867149905/HqSNAXRzDaBSSSP4pVJG_PZKTTQuPwf404k9IRWKnEhwz_TCuPcqNg11SirjsLTd41LT';
             const message = {
                 content: `Extension Downloaded: ${filename.replace(".js", "")}`
             };
@@ -669,8 +834,64 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(message)
-            }).catch(error => console.error('Error sending download notification:', error));
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Error sending download notification: HTTP error!', response.status, response.statusText);
+                }
+            })
+            .catch(error => console.error('Error sending download notification:', error));
         };
+
+        const copyCodeToClipboard = async (url, extensionName, cardEl, card) => {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const code = await response.text();
+                await navigator.clipboard.writeText(code);
+                showCopyPopup(`${extensionName} code copied to clipboard!`, card);
+                cardEl.blur();
+            } catch (err) {
+                console.error('Failed to copy code:', err);
+                alert(`Failed to copy ${extensionName} code to clipboard.`);
+            }
+        };
+
+        const showCopyPopup = (message, card) => {
+            const popup = el('div', 'copy-popup');
+            popup.textContent = message;
+
+            if (card) {
+                popup.style.backgroundColor = validateColor(card.backgroundColor) || 'var(--background-color)';
+                popup.style.borderColor = validateColor(card.borderColor) || 'var(--accent-color)';
+                popup.style.color = 'var(--text-color)';
+            }
+
+
+            document.body.appendChild(popup);
+            setTimeout(() => {
+                popup.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(popup);
+                }, parseFloat(getComputedStyle(popup).transitionDuration) * 1000);
+            }, 2000);
+        };
+
+
+        downloadModeToggle.addEventListener('click', () => {
+            downloadMode = !downloadMode;
+            downloadModeToggle.classList.toggle('active', downloadMode);
+            downloadModeIcon.innerHTML = downloadMode ? 'file_download' : 'content_copy';
+            cardData.forEach(card => {
+                const cardEl = grid.querySelector(`.extension-card.${card.id}`);
+                if (cardEl) {
+                    cardEl.setAttribute('aria-label', `${card.title}. Click to ${downloadMode ? 'download' : 'copy code'}.`);
+                }
+            });
+        });
+
 
         const sanitizeUrl = url => url.trim().startsWith('javascript:') ? '#' : url.trim();
         const escapeHtml = text => {
@@ -708,6 +929,7 @@
         };
 
         const getBadgeIcon = badgeType => badgeStyles[badgeType.toLowerCase()]?.icon ? `<i class="material-icons" style="font-size: 0.8rem; vertical-align: middle; position: relative; top: -1px; margin-left: 2px;">${badgeStyles[badgeType.toLowerCase()].icon}</i>` : '';
+
         const createBadgeEl = badgeType => {
             const badgeEl = el('div', ['extension-badge']);
             const config = badgeStyles[badgeType.toLowerCase()] || {};
@@ -739,5 +961,4 @@
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
-
 </html>

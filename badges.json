@@ -1,107 +1,92 @@
 {
-    "new": {
+  "new": {
       "backgroundColor": "#BA68C8",
       "borderColor": "#AB47BC",
       "color": "white",
-      "icon": "stars",
-      "tooltip": "Recently Released"
-    },
-    "updated": {
+      "icon": "stars"
+  },
+  "updated": {
       "backgroundColor": "#2196F3",
       "borderColor": "#1976D2",
       "color": "white",
-      "icon": "update",
-      "tooltip": "Recently Updated"
-    },
-    "unstable": {
+      "icon": "update"
+  },
+  "unstable": {
       "backgroundColor": "#F44336",
       "borderColor": "#D32F2F",
       "color": "white",
-      "icon": "warning",
-      "tooltip": "May contain bugs"
-    },
-    "beta": {
+      "icon": "warning"
+  },
+  "beta": {
       "backgroundColor": "#FFC107",
       "borderColor": "#FFA000",
       "color": "black",
-      "icon": "flag",
-      "tooltip": "Beta Version"
-    },
-    "popular": {
+      "icon": "flag"
+  },
+  "popular": {
       "backgroundColor": "#E91E63",
       "borderColor": "#C2185B",
       "color": "white",
-      "icon": "trending_up",
-      "tooltip": "Popular Extension"
-    },
-    "featured": {
+      "icon": "trending_up"
+  },
+  "featured": {
       "backgroundColor": "#673AB7",
       "borderColor": "#512DA8",
       "color": "white",
-      "icon": "grade",
-      "tooltip": "Featured Extension"
-    },
-    "deprecated": {
+      "icon": "grade"
+  },
+  "deprecated": {
       "backgroundColor": "#9E9E9E",
       "borderColor": "#757575",
       "color": "white",
-      "icon": "block",
-      "tooltip": "No longer supported"
-    },
-    "experimental": {
+      "icon": "block"
+  },
+  "experimental": {
       "backgroundColor": "#795548",
       "borderColor": "#5D4037",
       "color": "white",
-      "icon": "science",
-      "tooltip": "Use with caution"
-    },
-    "security": {
+      "icon": "science"
+  },
+  "security": {
       "backgroundColor": "#FF5722",
       "borderColor": "#E64A19",
       "color": "white",
-      "icon": "security",
-      "tooltip": "Security patch needed"
-    },
-    "performance": {
+      "icon": "security"
+  },
+  "performance": {
       "backgroundColor": "#00BCD4",
       "borderColor": "#00ACC1",
       "color": "white",
-      "icon": "speed",
-      "tooltip": "Optimized for performance"
-    },
-    "accessibility": {
+      "icon": "speed"
+  },
+  "accessibility": {
       "backgroundColor": "#8BC34A",
       "borderColor": "#689F38",
       "color": "white",
-      "icon": "accessible",
-      "tooltip": "Designed for accessibility"
-    },
-    "ai": {
+      "icon": "accessible"
+  },
+  "ai": {
       "backgroundColor": "#9C27B0",
       "borderColor": "#7B1FA2",
       "color": "white",
-      "icon": "memory",
-      "tooltip": "Artificial Intelligence"
-    },
-    "bug": {
+      "icon": "memory"
+  },
+  "bug": {
       "backgroundColor": "#f44336",
       "borderColor": "#d32f2f",
       "color": "white",
-      "icon": "bug_report",
-      "tooltip": "Has known bugs"
-    },
-    "optimization": {
+      "icon": "bug_report"
+  },
+  "optimization": {
       "backgroundColor": "#009688",
       "borderColor": "#00796b",
       "color": "white",
-      "icon": "tune",
-      "tooltip": "Needs optimization"
-    },
-    "needs": {
+      "icon": "tune"
+  },
+  "needs": {
       "backgroundColor": "#333377",
       "borderColor": "#222244",
       "color": "white",
-      "icon": "wifi",
-      "tooltip": "Needs"
-    }
+      "icon": "wifi"
   }
+}

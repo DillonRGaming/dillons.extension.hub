@@ -2,7 +2,7 @@
     {
         "id": "GeminiGo",
         "title": "GeminiGo",
-        "description": "Integration for accessing Google Gemini.",
+        "description": "Integrates with Google Gemini.",
         "image": "images/GeminiGo.png",
         "backgroundColor": "#333333",
         "borderColor": "#222222",
@@ -15,10 +15,10 @@
     {
         "id": "FormatNumbers",
         "title": "FormatNumbers",
-        "description": "Formats numbers to a readable format.",
+        "description": "Formats numbers into a more readable format.",
         "image": "images/FormatNumbers.png",
         "backgroundColor": "#419873",
-        "borderColor": "#277B58 ",
+        "borderColor": "#277B58",
         "hoverColor": "#5DC895",
         "download": "files/FormatNumbers.js",
         "credit": "DogeisCut",
@@ -27,7 +27,7 @@
     {
         "id": "Parasite",
         "title": "Parasite",
-        "description": "Allows releasing of sprites.",
+        "description": "Enables the releasing of sprites.",
         "image": "images/Parasite.png",
         "backgroundColor": "#C53131",
         "borderColor": "#B22224",
@@ -39,7 +39,7 @@
     {
         "id": "WorldData",
         "title": "WorldData",
-        "description": "Outputs global data like population, capital city and more.",
+        "description": "Provides global data like population and capital cities.",
         "image": "images/WorldData.png",
         "backgroundColor": "#32479A",
         "borderColor": "#273C8E",
@@ -52,7 +52,7 @@
     {
         "id": "WebBlocks",
         "title": "WebBlocks",
-        "description": "Allows running HTML, CSS, and JS.",
+        "description": "Execute HTML, CSS, and JavaScript code.",
         "image": "images/WebBlocks.png",
         "backgroundColor": "#36454F",
         "borderColor": "#28333A",
@@ -65,7 +65,7 @@
     {
         "id": "penguinpeer",
         "title": "PenguinPeer",
-        "description": "Peer-to-peer communication using Penguin.",
+        "description": "Enables peer-to-peer communication.",
         "image": "images/PenguinPeer.png",
         "backgroundColor": "#4a90e2",
         "borderColor": "#357ebd",
@@ -78,7 +78,7 @@
     {
         "id": "reorder",
         "title": "ReOrder",
-        "description": "Allows reordering of categories in the extensions menu.",
+        "description": "Allows users to reorder categories in the extension menu.",
         "image": "images/ReOrder.png",
         "backgroundColor": "#374799",
         "borderColor": "#2C3E75",
