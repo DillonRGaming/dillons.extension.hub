@@ -609,11 +609,12 @@
             opacity: 0.95;
             transition: opacity var(--transition-speed) ease;
             text-align: center;
+            color: white !important;
         }
 
         body.light-mode .copy-popup {
             background-color: var(--background-color);
-            color: var(--text-color);
+            color: white !important;
         }
     </style>
 </head>
@@ -866,7 +867,6 @@
             if (card) {
                 popup.style.backgroundColor = validateColor(card.backgroundColor) || 'var(--background-color)';
                 popup.style.borderColor = validateColor(card.borderColor) || 'var(--accent-color)';
-                popup.style.color = 'var(--text-color)';
             }
 
 
