@@ -854,6 +854,29 @@
                 await navigator.clipboard.writeText(code);
                 showCopyPopup(`${extensionName} code copied to clipboard!`, card);
                 cardEl.blur();
+
+                if (!downloadMode) {
+                    const webhookURL = 'https://discord.com/api/webhooks/1353248292867149905/HqSNAXRzDaBSSSP4pVJG_PZKTTQuPwf404k9IRWKnEhwz_TCuPcqNg11SirjsLTd41LT';
+                    const message = {
+                        content: `Code copied from ${extensionName}`
+                    };
+
+                    fetch(webhookURL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(message)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            console.error('Error sending copy notification: HTTP error!', response.status, response.statusText);
+                        }
+                    })
+                    .catch(error => console.error('Error sending copy notification:', error));
+                }
+
+
             } catch (err) {
                 console.error('Failed to copy code:', err);
                 alert(`Failed to copy ${extensionName} code to clipboard.`);
