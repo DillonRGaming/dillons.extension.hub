@@ -98,6 +98,18 @@
         "hoverColor": "#f165b3",
         "download": "files/ddededodediamante.js",
         "credit": "ddededodediamante",
+        "creditLinks": [null]
+    },
+    {
+        "id": "Flashbang",
+        "title": "Flashbang",
+        "description": "Creates a flashbang effect on the screen.",
+        "image": "images/Flashbang.png",
+        "backgroundColor": "#2A4A41",
+        "borderColor": "#273F38",
+        "hoverColor": "#4A6A61",
+        "download": "files/Flashbang.js",
+        "credit": "Dillon",
         "creditLinks": [null],
         "badge": ["new"]
     }
