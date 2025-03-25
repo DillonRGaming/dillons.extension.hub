@@ -1,11 +1,14 @@
 (function (Scratch) {
     'use strict';
 
+    const svgIcon = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTMxIiBoZWlnaHQ9IjkzMSIgdmlld0JveD0iMCAwIDkzMSA5MzEiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjQ2NS41IiBjeT0iNDY1LjUiIHI9IjQ2NS41IiBmaWxsPSIjMzc0Nzk5Ii8+CjxyZWN0IHdpZHRoPSIxMTYiIGhlaWdodD0iNTI4IiByeD0iNTMiIHRyYW5zZm9ybT0ibWF0cml4KC0xIDAgMCAxIDc1NSAyMDIpIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB3aWR0aD0iMTE2IiBoZWlnaHQ9IjUyOCIgcng9IjUzIiB0cmFuc2Zvcm09Im1hdHJpeCgtMSAwIDAgMSAyOTMgMjAyKSIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTU5MiAyNTdDNTkyIDIyNy43MjkgNTY4LjI3MSAyMDQgNTM5IDIwNEwzODkgMjA0QzM1OS43MjkgMjA0IDMzNiAyMjcuNzI5IDMzNiAyNTdMMzM2IDY3N0MzMzYgNzA2LjI3MSAzNTkuNzI5IDczMCAzODkgNzMwTDUzOSA3MzBDNTY4LjI3MSA3MzAgNTkyIDcwNi4yNzEgNTkyIDY3N0w1OTIgMjU3WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==";
+
     class ReOrder {
         getInfo() {
             return {
                 id: 'reorder',
                 name: 'ReOrder',
+                menuIconURI: svgIcon,
                 color1: '#374799',
                 color2: '#2C3E75'
             };

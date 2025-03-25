@@ -1,31 +1,35 @@
 (function(Scratch) {
     'use strict';
-  
+
+    const svgIcon = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTMxIiBoZWlnaHQ9IjkzMSIgdmlld0JveD0iMCAwIDkzMSA5MzEiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjQ2NS41IiBjeT0iNDY1LjUiIHI9IjQ2NS41IiBmaWxsPSIjMzI0NzlBIi8+CjxjaXJjbGUgY3g9IjQ2NiIgY3k9IjQ2MiIgcj0iMjc5IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjM3Ii8+CjxwYXRoIGQ9Ik0zNTMuMzM4IDQ2My40MTJDMzk2LjMzIDM3My41NzIgMzA4LjMzNyAzMzUuMTAzIDI1OC45NjYgMzI3LjA5OUMxNDYuNzY5IDM4MC4yMTIgMTkwLjM3MiA1MjkuMDk3IDIyNi4xOTggNTk2LjkwMUMyNTAuNjY1IDU4OS44MzggMzEwLjM0NiA1NTMuMjUyIDM1My4zMzggNDYzLjQxMloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik01NjcuMTg4IDYwMi4zODJDNDc3LjQ5NCA2MjcuMzI1IDQ2Ny44NTMgNjg3LjgzMSA0NzQuMjQ1IDcxNC45NjVDNTUwLjczMyA3NDAuODU2IDY2OC4zMjggNjQ1LjczOSA3MTcuNTY0IDU5NC45NDRDNzA0LjgxMiA1ODcuMDMgNjU2Ljg4MyA1NzcuNDM5IDU2Ny4xODggNjAyLjM4MloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik01OTAuMjcyIDQ3Ni4xMzNDNTM0LjQxMSA0NTQuMTgzIDU1OC40NTIgMzQ1Ljg0NyA1MzIuMjkgMjkyLjc0MUM1MTEuODkyIDI1MS4zMzcgNDE1Ljk2MiAyMjguNTM5IDM2Ny4wMjUgMjIxLjcyNkM2NzIuMDg4IDEwNi4wMDIgNzQxLjk2MSAzNTguMjE4IDczOC43NjUgNDk4Ljc5MkM3MDcuODg4IDQ5OC41NTYgNjM0Ljk2MSA0OTMuNjkzIDU5MC4yNzIgNDc2LjEzM1oiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=";
+
     class WorldData {
-      getInfo() {
-        return {
-          id: 'worldData',
-          name: 'WorldData',
-          color1: '#32479A',
-          color2: '#283C80',
-          color3: '#1E3166',
-          blocks: [
-            {
-              opcode: 'getWorldData',
-              blockType: Scratch.BlockType.REPORTER,
-              text: 'Get [INFO] of [COUNTRY]',
-              arguments: {
-                INFO: {
-                  type: Scratch.ArgumentType.STRING,
-                  menu: 'infoOptions',
-                  defaultValue: 'Capital'
-                },
-                COUNTRY: {
-                  type: Scratch.ArgumentType.STRING,
-                  menu: 'countryMenu',
-                  defaultValue: 'United States'
-                }
-              }
+        getInfo() {
+            return {
+                id: 'worldData',
+                name: 'WorldData',
+                menuIconURI: svgIcon,
+                blockIconURI: svgIcon,
+                color1: '#32479A',
+                color2: '#283C80',
+                color3: '#1E3166',
+                blocks: [
+                    {
+                        opcode: 'getWorldData',
+                        blockType: Scratch.BlockType.REPORTER,
+                        text: 'Get [INFO] of [COUNTRY]',
+                        arguments: {
+                            INFO: {
+                                type: Scratch.ArgumentType.STRING,
+                                menu: 'infoOptions',
+                                defaultValue: 'Capital'
+                            },
+                            COUNTRY: {
+                                type: Scratch.ArgumentType.STRING,
+                                menu: 'countryMenu',
+                                defaultValue: 'United States'
+                            }
+                        }
             }
           ],
           menus: {
