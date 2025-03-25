@@ -941,7 +941,7 @@
             }
         };
         const copyUrlToClipboard = (url, extensionName, cardEl, card) => {
-            const newUrl = `https://extension-gallery.vercel.app//files/${extensionName}.js`;
+            const newUrl = `https://extension-gallery.vercel.app/files/${extensionName}.js`;
             navigator.clipboard.writeText(newUrl).then(() => {
                 showCopyPopup(`${extensionName} URL copied to clipboard!`, card);
                 cardEl.blur();
