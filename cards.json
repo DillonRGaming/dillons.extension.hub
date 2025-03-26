@@ -50,19 +50,6 @@
         "badge": []
     },
     {
-        "id": "WebBlocks",
-        "title": "WebBlocks",
-        "description": "Execute HTML, CSS, and JavaScript code.",
-        "image": "images/WebBlocks.png",
-        "backgroundColor": "#36454F",
-        "borderColor": "#28333A",
-        "hoverColor": "#556067",
-        "download": "files/WebBlocks.js",
-        "credit": "Dillon",
-        "creditLinks": [null],
-        "badge": ["beta"]
-    },
-    {
         "id": "penguinpeer",
         "title": "PenguinPeer",
         "description": "Enables peer-to-peer communication.",
