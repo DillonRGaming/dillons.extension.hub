@@ -1,0 +1,43 @@
+{
+  "developers": [
+    {
+      "name": "Dillon",
+      "image": "https://cdn.discordapp.com/avatars/309048302450638849/90e9f52826fa9511eb6c5a44095c2656.webp?size=1024&width=704&height=704",
+      "description": "Creator of the Extension Gallery and many extensions.",
+      "link": ""
+    },
+    {
+      "name": "DogeisCut",
+      "image": "https://cdn.discordapp.com/avatars/269281036687507456/63abe8c45a1b88915b69edaa31bf7001.webp?size=1024&width=704&height=704",
+      "description": "An extension creator.",
+      "link": "https://github.com/DogeisCut"
+    },
+    {
+      "name": "ddededodediamante",
+      "image": "https://cdn.discordapp.com/avatars/694587798598058004/9638395f0a240ac6b2a9eea6d865d548.webp?size=1024&width=704&height=704",
+      "description": "Creator of the ddededodediamante extension.",
+      "link": "",
+	  "nameColor": "#eb459f"
+    }
+  ],
+  "credit": [
+    {
+      "name": "Anzuku",
+      "image": "https://cdn.discordapp.com/avatars/1294927831104753714/40d605615742ff7438d5a1fb8871d9de.webp?size=1024&width=704&height=704",
+      "link": ""
+    },
+    {
+      "name": "𝓴𝓲𝓼𝓾𝓾",
+      "image": "https://cdn.discordapp.com/avatars/718720315403927562/28c8c3c8f8ec381d0b1edb80004b681a.webp?size=1024&width=704&height=704",
+      "link": ""
+    }
+  ],
+  "comments": [
+    {
+      "author": "ddededodediamante",
+      "authorImage": "https://cdn.discordapp.com/avatars/694587798598058004/9638395f0a240ac6b2a9eea6d865d548.webp?size=1024&width=704&height=704",
+      "text": "'Wow the best extension ever so cool and awesome and'",
+      "authorColor": "#eb459f"
+    }
+  ]
+}
