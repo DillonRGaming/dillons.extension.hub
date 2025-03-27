@@ -99,5 +99,18 @@
         "credit": "Dillon, Anzuku",
         "creditLinks": [null, null],
         "badge": ["new"]
+    },
+    {
+        "id": "Countdown",
+        "title": "Countdown",
+        "description": "TOD.",
+        "image": "images/Countdown.png",
+        "backgroundColor": "#000000",
+        "borderColor": "#252525",
+        "hoverColor": "#444444",
+        "download": "files/Countdown.js",
+        "credit": "Dillon",
+        "creditLinks": [null],
+        "badge": ["new"]
     }
 ]
