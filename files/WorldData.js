@@ -17,6 +17,7 @@
                     {
                         opcode: 'getWorldData',
                         blockType: Scratch.BlockType.REPORTER,
+                        blockShape: Scratch.BlockShape.LEAF,
                         text: 'Get [INFO] of [COUNTRY]',
                         arguments: {
                             INFO: {

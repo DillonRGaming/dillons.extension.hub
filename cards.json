@@ -85,7 +85,8 @@
         "hoverColor": "#f165b3",
         "download": "files/ddededodediamante.js",
         "credit": "ddededodediamante",
-        "creditLinks": [null]
+        "creditLinks": [null],
+        "badge": ["updated"]
     },
     {
         "id": "Flashbang",
@@ -98,7 +99,7 @@
         "download": "files/Flashbang.js",
         "credit": "Dillon, Anzuku",
         "creditLinks": [null, null],
-        "badge": ["new"]
+        "badge": []
     },
     {
         "id": "Countdown",
@@ -111,6 +112,32 @@
         "download": "files/Countdown.js",
         "credit": "Dillon",
         "creditLinks": [null],
+        "badge": []
+    },
+    {
+        "id": "FormatTime",
+        "title": "FormatTime",
+        "description": "Formats time into readable units.",
+        "image": "images/FormatTime.png",
+        "backgroundColor": "#FF591C",
+        "borderColor": "#E74E17",
+        "hoverColor": "#FF794D",
+        "download": "files/FormatTime.js",
+        "credit": "Dillon",
+        "creditLinks": [null],
         "badge": ["new"]
+    },
+    {
+        "id": "CheckSum",
+        "title": "CheckSum",
+        "description": "Generates and validates checksums for text.",
+        "image": "images/CheckSum.png",
+        "backgroundColor": "#8E58AD",
+        "borderColor": "#7A4A93",
+        "hoverColor": "#663C7A",
+        "download": "files/CheckSum.js",
+        "credit": "LordCat",
+        "creditLinks": [],
+        "badge": []
     }
 ]

@@ -52,6 +52,7 @@
                         opcode: "askGemini",
                         text: "ask gemini (no memory) [QUESTION]",
                         blockType: Scratch.BlockType.REPORTER,
+                        blockShape: Scratch.BlockShape.LEAF,
                         arguments: {
                             QUESTION: { type: Scratch.ArgumentType.STRING, defaultValue: "What is AI?" }
                         }
@@ -60,6 +61,7 @@
                         opcode: "askGeminiWithPrompt",
                         text: "ask gemini (no memory) prompt: [PROMPT] question: [QUESTION]",
                         blockType: Scratch.BlockType.REPORTER,
+                        blockShape: Scratch.BlockShape.LEAF,
                         arguments: {
                             PROMPT: { type: Scratch.ArgumentType.STRING, defaultValue: "Be short and concise" },
                             QUESTION: { type: Scratch.ArgumentType.STRING, defaultValue: "What is AI?" }

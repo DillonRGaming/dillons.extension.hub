@@ -90,6 +90,7 @@
             {
               opcode: "getPenguinId",
               blockType: Scratch.BlockType.REPORTER,
+              blockShape: Scratch.BlockShape.LEAF,
               text: "My Penguin ID",
             },
             '---',
@@ -136,11 +137,13 @@
             {
               opcode: "getLastPenguinData",
               blockType: Scratch.BlockType.REPORTER,
+              blockShape: Scratch.BlockShape.LEAF,
               text: "Last received Penguin data",
             },
             {
               opcode: "getAllPenguinData",
               blockType: Scratch.BlockType.REPORTER,
+              blockShape: Scratch.BlockShape.LEAF,
               text: "All received Penguin data (JSON)",
             },
             {
@@ -166,11 +169,13 @@
             {
               opcode: "connectedPenguinCount",
               blockType: Scratch.BlockType.REPORTER,
+              blockShape: Scratch.BlockShape.LEAF,
               text: "Number of connected Penguins",
             },
             {
               opcode: "listConnectedPenguins",
               blockType: Scratch.BlockType.REPORTER,
+              blockShape: Scratch.BlockShape.LEAF,
               text: "List of connected Penguins (JSON)",
             },
           ],

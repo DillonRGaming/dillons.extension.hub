@@ -12,12 +12,11 @@
       "description": "An extension creator.",
       "link": "https://github.com/DogeisCut"
     },
-    {
-      "name": "ddededodediamante",
-      "image": "https://cdn.discordapp.com/avatars/694587798598058004/9638395f0a240ac6b2a9eea6d865d548.webp?size=1024&width=704&height=704",
-      "description": "Creator of the ddededodediamante extension.",
-      "link": "",
-	  "nameColor": "#eb459f"
+	  {
+      "name": "Lord cat",
+      "image": "https://cdn.discordapp.com/avatars/1164322893438648401/9f21363b74d3063592f08df70b9137fc.webp?size=1024&width=704&height=704",
+      "description": "An extension creator.",
+      "link": ""
     }
   ],
   "credit": [
@@ -55,6 +54,11 @@
       "authorImage": "https://cdn.discordapp.com/avatars/1164322893438648401/9f21363b74d3063592f08df70b9137fc.webp?size=1024&width=704&height=704",
       "text": "'I seriously like the design of your website dude'",
       "authorColor": "#e3ed84"
+    },
+    {
+      "author": "𝓴𝓲𝓼𝓾𝓾",
+      "authorImage": "https://cdn.discordapp.com/avatars/718720315403927562/28c8c3c8f8ec381d0b1edb80004b681a.webp?size=1024&width=704&height=704",
+      "text": "'this extension gallery is so friggin tuff!!!!'"
     }
   ]
 }

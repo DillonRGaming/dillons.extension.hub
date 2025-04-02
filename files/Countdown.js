@@ -24,6 +24,7 @@
             {
               opcode: 'getTimeLeftFormatted',
               blockType: Scratch.BlockType.REPORTER,
+              blockShape: Scratch.BlockShape.LEAF,
               text: 'Time Left?',
               disableMonitor: true,
               filter: [Scratch.TargetType.SPRITE, Scratch.TargetType.STAGE],

@@ -240,7 +240,7 @@
 
         .extensions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: var(--card-gap);
             margin: 0 auto;
             padding: 0 15px;
@@ -249,6 +249,7 @@
 
         .extension-card {
             width: 100%;
+            aspect-ratio: 1.7777777778;
             display: flex;
             flex-direction: column;
             border-radius: var(--card-border-radius);
@@ -481,7 +482,7 @@
             }
 
             .extensions-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
                 gap: 20px;
                 padding: 0 10px;
             }
@@ -671,7 +672,7 @@
 
         .copy-popup {
             position: fixed;
-            bottom: 20px;
+            bottom: 19px;
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--background-color);

@@ -127,6 +127,7 @@
             opcode: "formatNumber",
             text: "format number [NUM] to notation [NOTATION] with [DECIMALS] decimal places",
             blockType: Scratch.BlockType.REPORTER,
+            blockShape: Scratch.BlockShape.LEAF,
             arguments: {
               NUM: {
                 type: Scratch.ArgumentType.NUMBER,
