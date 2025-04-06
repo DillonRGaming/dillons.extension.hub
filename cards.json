@@ -9,8 +9,7 @@
         "hoverColor": "#555555",
         "download": "files/GeminiGo.js",
         "credit": "Dillon, 𝓴𝓲𝓼𝓾𝓾",
-        "creditLinks": [null, null],
-        "badge": ["needs"]
+        "creditLinks": [null, null]
     },
     {
         "id": "FormatNumbers",
@@ -46,8 +45,7 @@
         "hoverColor": "#5566CC",
         "download": "files/WorldData.js",
         "credit": "Dillon",
-        "creditLinks": [null],
-        "badge": []
+        "creditLinks": [null]
     },
     {
         "id": "penguinpeer",
@@ -56,11 +54,10 @@
         "image": "images/PenguinPeer.png",
         "backgroundColor": "#4a90e2",
         "borderColor": "#357ebd",
-        "hoverColor": "#2069a8",
+        "hoverColor": "#5ab4ff",
         "download": "files/PenguinPeer.js",
         "credit": "Dillon",
-        "creditLinks": [null],
-        "badge": ["needs"]
+        "creditLinks": [null]
     },
     {
         "id": "reorder",
@@ -72,21 +69,7 @@
         "hoverColor": "#5767B9",
         "download": "files/ReOrder.js",
         "credit": "Dillon",
-        "creditLinks": [null],
-        "badge": ["unstable"]
-    },
-    {
-        "id": "ddededodediamante",
-        "title": "ddededodediamante",
-        "description": "ddededodediamante",
-        "image": "images/ddededodediamante.png",
-        "backgroundColor": "#eb459f",
-        "borderColor": "#c71c77",
-        "hoverColor": "#f165b3",
-        "download": "files/ddededodediamante.js",
-        "credit": "ddededodediamante",
-        "creditLinks": [null],
-        "badge": ["updated"]
+        "creditLinks": [null]
     },
     {
         "id": "Flashbang",
@@ -98,8 +81,7 @@
         "hoverColor": "#4A6A61",
         "download": "files/Flashbang.js",
         "credit": "Dillon, Anzuku",
-        "creditLinks": [null, null],
-        "badge": []
+        "creditLinks": [null, null]
     },
     {
         "id": "Countdown",
@@ -111,8 +93,7 @@
         "hoverColor": "#444444",
         "download": "files/Countdown.js",
         "credit": "Dillon",
-        "creditLinks": [null],
-        "badge": []
+        "creditLinks": [null]
     },
     {
         "id": "FormatTime",
@@ -124,8 +105,7 @@
         "hoverColor": "#FF794D",
         "download": "files/FormatTime.js",
         "credit": "Dillon",
-        "creditLinks": [null],
-        "badge": ["new"]
+        "creditLinks": [null]
     },
     {
         "id": "CheckSum",
@@ -134,10 +114,21 @@
         "image": "images/CheckSum.png",
         "backgroundColor": "#8E58AD",
         "borderColor": "#7A4A93",
-        "hoverColor": "#663C7A",
+        "hoverColor": "#A06BBF",
         "download": "files/CheckSum.js",
         "credit": "LordCat",
-        "creditLinks": [],
-        "badge": []
+        "creditLinks": []
+    },
+    {
+        "id": "VoiceRecognition",
+        "title": "VoiceRecognition",
+        "description": "Turns your voice into text.",
+        "image": "images/VoiceRecognition.png",
+        "backgroundColor": "#F267AC",
+        "borderColor": "#EA25A1",
+        "hoverColor": "#FF69B4",
+        "download": "files/VoiceRecognition.js",
+        "credit": "Dillon",
+        "creditLinks": [null]
     }
 ]

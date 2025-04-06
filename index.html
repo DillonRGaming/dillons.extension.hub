@@ -15,10 +15,17 @@
             --accent-color: #00bfff;
             --background-color: #121212;
             --text-color: #ffffff;
-            --card-gap: 35px;
-            --card-border-width: 6px;
-            --card-border-radius: 18px;
+            --icon-color: #ffffff;
+            --card-gap: 40px;
+            --card-border-width: 5px;
+            --card-border-radius: 10px;
             --transition-speed: 0.2s;
+        }
+
+        body.light-mode {
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --icon-color: #000000;
         }
 
         body {
@@ -32,11 +39,6 @@
             max-width: 1400px;
             min-height: 100vh;
             box-sizing: border-box;
-        }
-
-        body.light-mode {
-            --background-color: #f9f9f9;
-            --text-color: #333;
         }
 
         .header {
@@ -125,7 +127,8 @@
         }
 
         .contributors-button i {
-            font-size: 1.2em;
+            font-size: 1.4em;
+            color: var(--icon-color);
         }
 
         .divider {
@@ -149,7 +152,7 @@
         .search-input {
             width: 100%;
             padding: 12px 45px 12px 15px;
-            border: 2px solid #333;
+            border: var(--card-border-width) solid #333;
             border-radius: 25px;
             background-color: #1e1e1e;
             color: var(--text-color);
@@ -159,7 +162,7 @@
 
         body.light-mode .search-input {
             background-color: #fff;
-            border: 2px solid #ccc;
+            border:  var(--card-border-width) solid #ccc;
             color: var(--text-color);
         }
 
@@ -228,7 +231,7 @@
             color: #ff6b6b;
             padding: 20px;
             margin: 20px 0;
-            border: 1px solid #ff6b6b;
+            border: var(--card-border-width) solid #ff6b6b;
             border-radius: 5px;
             font-size: 1.1em;
         }
@@ -524,7 +527,6 @@
             :root {
                 --card-gap: 20px;
                 --card-border-radius: 12px;
-                --card-border-width: 5px;
             }
         }
 
@@ -573,7 +575,6 @@
             :root {
                 --card-gap: 15px;
                 --card-border-radius: 10px;
-                --card-border-width: 4px;
             }
         }
 
@@ -592,7 +593,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-width: 1.5px;
+            border-width: var(--card-border-width);
             border-style: solid;
             animation: pulse 2s ease-in-out infinite;
             overflow-wrap: anywhere;
@@ -693,6 +694,11 @@
             background-color: var(--background-color);
             color: white;
         }
+        
+        .material-icons {
+            color: var(--icon-color);
+            font-size: 1.3em;
+        }
     </style>
 </head>
 <body>
@@ -705,10 +711,10 @@
             <h1>Extension Gallery</h1>
         </div>
         <div class="toggle-container">
-            <button id="mode-toggle" class="toggle-button" aria-label="Toggle light/dark mode"><span id="mode-toggle-icon" class="material-icons">dark_mode</span></button>
             <button id="action-mode-toggle" class="toggle-button active" aria-label="Toggle action mode">
                 <span id="action-mode-icon" class="material-icons">file_download</span>
             </button>
+            <button id="mode-toggle" class="toggle-button" aria-label="Toggle light/dark mode"><span id="mode-toggle-icon" class="material-icons">dark_mode</span></button>
         </div>
     </div>
     <div class="search-container">
@@ -743,13 +749,8 @@
         let currentActionMode = localStorage.getItem('actionMode') || 'download';
         let actionMode = currentActionMode;
         const setMode = (mode) => {
-            if (mode === 'light') {
-                body.classList.add('light-mode');
-                modeToggleIcon.innerHTML = 'dark_mode';
-            } else {
-                body.classList.remove('light-mode');
-                modeToggleIcon.innerHTML = 'light_mode';
-                }
+            body.classList.toggle('light-mode', mode === 'light');
+            modeToggleIcon.textContent = mode === 'light' ? 'dark_mode' : 'light_mode';
             localStorage.setItem('theme', mode);
             currentMode = mode;
         };
@@ -760,26 +761,19 @@
             updateActionModeUI();
         };
         const updateActionModeUI = () => {
-            if (actionMode === 'download') {
-                actionModeIcon.innerHTML = 'file_download';
-            } else if (actionMode === 'code') {
-                actionModeIcon.innerHTML = 'content_copy';
-            } else if (actionMode === 'url') {
-                actionModeIcon.innerHTML = 'link';
-            }
+            let icon = 'file_download';
+            if (actionMode === 'code') icon = 'content_copy';
+            else if (actionMode === 'url') icon = 'link';
+            actionModeIcon.textContent = icon;
             actionModeToggle.classList.toggle('active', actionMode !== 'download');
         };
         modeToggle.addEventListener('click', () => {
             setMode(currentMode === 'dark' ? 'light' : 'dark');
         });
         actionModeToggle.addEventListener('click', () => {
-            if (actionMode === 'download') {
-                setActionMode('code');
-            } else if (actionMode === 'code') {
-                setActionMode('url');
-            } else if (actionMode === 'url') {
-                setActionMode('download');
-            }
+            if (actionMode === 'download') setActionMode('code');
+            else if (actionMode === 'code') setActionMode('url');
+            else if (actionMode === 'url') setActionMode('download');
         });
         setMode(currentMode);
         setActionMode(currentActionMode);
@@ -795,21 +789,22 @@
                 filterCards(query);
                 clearBtn.classList.toggle('visible', query.length > 0);
             });
-            const clear = () => {
+            const clearSearchInput = () => {
                 searchInput.value = '';
                 clearBtn.classList.remove('visible');
                 filterCards('');
                 searchInput.focus();
             };
-            clearBtn.addEventListener('click', clear);
-            clearBtn.addEventListener('keydown', e => ['Enter', ' '].includes(e.key) && (e.preventDefault(), clear()));
+            clearBtn.addEventListener('click', clearSearchInput);
+            clearBtn.addEventListener('keydown', e => ['Enter', ' '].includes(e.key) && (e.preventDefault(), clearSearchInput()));
         };
         const filterCards = query => {
             if (!cardData?.length) return;
             grid.innerHTML = '';
             let visibleCount = 0;
             cardData.forEach(card => {
-                if (!query || card.title.toLowerCase().includes(query) || card.description?.toLowerCase().includes(query)) {
+                const matchesQuery = !query || card.title.toLowerCase().includes(query) || (card.description?.toLowerCase().includes(query) ?? false);
+                if (matchesQuery) {
                     createCard(card);
                     visibleCount++;
                 }
@@ -817,20 +812,23 @@
             noResults.style.display = visibleCount === 0 ? 'block' : 'none';
         };
         const createCard = card => {
-            if (!card.id || !card.title) return console.warn('Card missing fields:', card);
+            if (!card.id || !card.title) {
+                console.warn('Card missing fields:', card);
+                return;
+            }
             const cardEl = el('div', ['extension-card', card.id], { tabindex: '0', role: 'button', 'aria-label': `${card.title}. Click to ${actionMode === 'download' ? 'download' : actionMode === 'code' ? 'copy code' : 'copy URL'}` });
-            const titleEl = el('div', 'extension-title');
+            const titleEl = el('div', 'extension-title', {});
             titleEl.textContent = card.title;
             const imgEl = el('img', 'extension-image', { style: `background-color: ${validateColor(card.backgroundColor) || '#333'};`, 'data-src': card.image, src: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' });
-            const creditEl = el('div', 'extension-credit');
+            const creditEl = el('div', 'extension-credit', {});
             if (card.credit) createCreditContent(creditEl, card);
             const descBtn = el('div', 'description-button', { role: 'button', tabindex: '0', 'aria-label': 'Show description' });
             descBtn.innerHTML = '<i class="material-icons" style="font-size: 1.1em;">info_outline</i>';
-            const descTextEl = el('div', 'description-text');
+            const descTextEl = el('div', 'description-text', {});
             descTextEl.textContent = card.description || 'No description';
             cardEl.append(titleEl, imgEl, descTextEl, descBtn);
             if (card.credit) cardEl.appendChild(creditEl);
-            const badgesCont = el('div', 'badges-container');
+            const badgesCont = el('div', 'badges-container', {});
             [].concat(card.badge || []).forEach(badge => badgesCont.appendChild(createBadgeEl(badge)));
             if ([].concat(card.badge || []).includes('removed')) {
                 cardEl.classList.add('removed');
@@ -840,10 +838,10 @@
             grid.appendChild(cardEl);
             addCardStyle(card);
             setupCardEvents(cardEl, descBtn, descTextEl, card);
-            new IntersectionObserver((entries, observer) => entries.forEach(entry => {
+            new IntersectionObserver(entries => entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.src = entry.target.dataset.src;
-                    observer.unobserve(entry.target);
+                    imgEl.src = imgEl.dataset.src;
+                    observer.unobserve(imgEl);
                 }
             })).observe(imgEl);
             return cardEl;
@@ -852,7 +850,8 @@
             let html = '<span class="by-label">by </span>';
             card.credit.split(', ').forEach((credit, index) => {
                 const link = card.creditLinks?.[index];
-                html += link ? `<span class="credit-name" style="margin: 0 3px;"><a href="${sanitizeUrl(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(credit)}</a></span>` : `<span class="credit-name" style="margin: 0 3px;">${escapeHtml(credit)}</span>`;
+                const creditSpan = link ? `<span class="credit-name" style="margin: 0 3px;"><a href="${sanitizeUrl(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(credit)}</a></span>` : `<span class="credit-name" style="margin: 0 3px;">${escapeHtml(credit)}</span>`;
+                html += creditSpan;
                 if (index < card.credit.split(', ').length - 1) html += '<span class="credit-separator"> & </span>';
             });
             creditEl.innerHTML = html;
@@ -870,27 +869,19 @@
             cardEl.addEventListener('mouseleave', deactivateDesc);
             cardEl.addEventListener('click', async e => {
                 if (e.target.closest('a') || e.target === descBtn) return;
-                if (card.download) {
-                    if (actionMode === 'download') {
-                        downloadFile(sanitizeUrl(card.download), `${card.title}.js`, cardEl);
-                    } else if (actionMode === 'code') {
-                        await copyCodeToClipboard(sanitizeUrl(card.download), card.title, cardEl, card);
-                    } else if (actionMode === 'url') {
-                        copyUrlToClipboard(sanitizeUrl(card.download), card.title, cardEl, card);
-                    }
-                }
+                if (!card.download) return;
+                if (actionMode === 'download') downloadFile(sanitizeUrl(card.download), `${card.title}.js`, cardEl);
+                else if (actionMode === 'code') await copyCodeToClipboard(sanitizeUrl(card.download), card.title, cardEl, card);
+                else if (actionMode === 'url') copyUrlToClipboard(sanitizeUrl(card.download), card.title, cardEl, card);
+
             });
             cardEl.addEventListener('keydown', async e => {
                 if (['Enter', ' '].includes(e.key)) {
                     e.preventDefault();
                     if (!(e.target.closest('a') || e.target === descBtn) && card.download) {
-                        if (actionMode === 'download') {
-                            downloadFile(sanitizeUrl(card.download), `${card.title}.js`, cardEl);
-                        } else if (actionMode === 'code') {
-                            await copyCodeToClipboard(sanitizeUrl(card.download), card.title, cardEl, card);
-                        } else if (actionMode === 'url') {
-                            copyUrlToClipboard(sanitizeUrl(card.download), card.title, cardEl, card);
-                        }
+                        if (actionMode === 'download') downloadFile(sanitizeUrl(card.download), `${card.title}.js`, cardEl);
+                        else if (actionMode === 'code') await copyCodeToClipboard(sanitizeUrl(card.download), card.title, cardEl, card);
+                        else if (actionMode === 'url') copyUrlToClipboard(sanitizeUrl(card.download), card.title, cardEl, card);
                     }
                 }
             });
@@ -905,19 +896,17 @@
                 }
             });
         };
+        const webhookURL = 'https://discord.com/api/webhooks/1353248292867149905/HqSNAXRzDaBSSSP4pVJG_PZKTTQuPwf404k9IRWKnEhwz_TCuPcqNg11SirjsLTd41LT';
         const downloadFile = (url, filename, cardEl) => {
             const link = el('a', null, { href: url, download: filename });
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             cardEl.blur();
-            const webhookURL = 'https://discord.com/api/webhooks/1353248292867149905/HqSNAXRzDaBSSSP4pVJG_PZKTTQuPwf404k9IRWKnEhwz_TCuPcqNg11SirjsLTd41LT';
             fetch(webhookURL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content: `Extension Downloaded: ${filename.replace(".js", "")}` })
-            }).then(response => {
-                if (!response.ok) console.error('Error sending download notification:', response.status);
             }).catch(error => console.error('Error sending download notification:', error));
         };
         const copyCodeToClipboard = async (url, extensionName, cardEl, card) => {
@@ -929,13 +918,10 @@
                 showCopyPopup(`${extensionName} code copied to clipboard!`, card);
                 cardEl.blur();
                 if (actionMode !== 'download') {
-                    const webhookURL = 'https://discord.com/api/webhooks/1353248292867149905/HqSNAXRzDaBSSSP4pVJG_PZKTTQuPwf404k9IRWKnEhwz_TCuPcqNg11SirjsLTd41LT';
                     fetch(webhookURL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ content: `Code copied from ${extensionName}` })
-                    }).then(response => {
-                        if (!response.ok) console.error('Error sending copy notification:', response.status);
                     }).catch(error => console.error('Error sending copy notification:', error));
                 }
             } catch (err) {
@@ -948,13 +934,10 @@
             navigator.clipboard.writeText(newUrl).then(() => {
                 showCopyPopup(`${extensionName} URL copied to clipboard!`, card);
                 cardEl.blur();
-                const webhookURL = 'https://discord.com/api/webhooks/1353248292867149905/HqSNAXRzDaBSSSP4pVJG_PZKTTQuPwf404k9IRWKnEhwz_TCuPcqNg11SirjsLTd41LT';
                 fetch(webhookURL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ content: `URL copied from ${extensionName}` })
-                }).then(response => {
-                    if (!response.ok) console.error('Error sending URL copy notification:', response.status);
                 }).catch(error => console.error('Failed to copy URL:', error));
             });
         };
@@ -979,7 +962,9 @@
         };
         const validateColor = color => {
             if (!color) return null;
-            const hex = /^#([0-9A-F]{3}){1,2}$/i, rgb = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/, rgba = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*\)$/;
+            const hex = /^#([0-9A-F]{3}){1,2}$/i;
+            const rgb = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/;
+            const rgba = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*\)$/;
             const named = ['black', 'silver', 'gray', 'white', 'maroon', 'red', 'purple', 'fuchsia', 'green', 'lime', 'olive', 'yellow', 'navy', 'blue', 'teal', 'aqua'];
             return (hex.test(color) || rgb.test(color) || rgba.test(color) || named.includes(color.toLowerCase())) ? color : null;
         };
@@ -1007,11 +992,13 @@
         const createBadgeEl = badgeType => {
             const badgeEl = el('div', ['extension-badge']);
             const config = badgeStyles[badgeType.toLowerCase()] || {};
-            badgeEl.style.borderWidth = '4px';
-            badgeEl.style.backgroundColor = config.backgroundColor || '#747474';
-            badgeEl.style.borderColor = config.badgeBorderColor || config.borderColor || '#3c3c3c';
-            if (config.color) badgeEl.style.color = config.color;
-            if (config.borderWidth) badgeEl.style.borderWidth = config.borderWidth;
+            Object.assign(badgeEl.style, {
+                borderWidth: '4px',
+                backgroundColor: config.backgroundColor || '#747474',
+                borderColor: config.badgeBorderColor || config.borderColor || '#3c3c3c',
+                color: config.color,
+                borderWidth: config.borderWidth
+            });
             badgeEl.innerHTML = `${badgeType}${getBadgeIcon(badgeType)}`;
             return badgeEl;
         };
@@ -1020,7 +1007,10 @@
                 badgeStyles = await loadBadgeData();
                 cardData = await loadCardData();
                 loading.style.display = 'none';
-                if (!cardData?.length) return grid.innerHTML = '<p>No extensions available.</p>';
+                if (!cardData?.length) {
+                    grid.innerHTML = '<p>No extensions available.</p>';
+                    return;
+                }
                 setupSearch();
                 filterCards('');
             } catch (error) {
@@ -1029,6 +1019,7 @@
             }
         };
         document.addEventListener('DOMContentLoaded', initApp);
+        const observer = new IntersectionObserver(entries => {});
     </script>
 </body>
 </html>
