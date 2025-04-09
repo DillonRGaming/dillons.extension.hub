@@ -3,7 +3,7 @@
   
     class SplitString {
       constructor() {}
-  
+
       splitString(args) {
         const itemIndex = Scratch.Cast.toNumber(args.ITEM);
         const text = Scratch.Cast.toString(args.TEXT);
@@ -17,7 +17,15 @@
           return '';
         }
       }
+
+      countParts(args) {
+        const text = Scratch.Cast.toString(args.TEXT);
+        const separator = Scratch.Cast.toString(args.SEPARATOR);
   
+        const parts = text.split(separator);
+        return parts.length;
+      }
+
       getInfo() {
         return {
           id: 'splitstring',
@@ -34,6 +42,21 @@
                   type: Scratch.ArgumentType.NUMBER,
                   defaultValue: 1
                 },
+                TEXT: {
+                  type: Scratch.ArgumentType.STRING,
+                  defaultValue: 'hello/world'
+                },
+                SEPARATOR: {
+                  type: Scratch.ArgumentType.STRING,
+                  defaultValue: '/'
+                }
+              }
+            },
+            {
+              opcode: 'countParts',
+              blockType: Scratch.BlockType.REPORTER,
+              text: 'count of parts in [TEXT] split by [SEPARATOR]',
+              arguments: {
                 TEXT: {
                   type: Scratch.ArgumentType.STRING,
                   defaultValue: 'hello/world'
