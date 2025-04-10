@@ -1,0 +1,86 @@
+[
+    {
+        "id": "GeminiGo",
+        "title": "GeminiGo",
+        "description": "Integrates with Google Gemini.",
+        "image": "images/GeminiGo.png",
+        "backgroundColor": "#333333",
+        "borderColor": "#222222",
+        "hoverColor": "#555555",
+        "download": "files/GeminiGo.js",
+        "credit": "Dillon, 𝓴𝓲𝓼𝓾𝓾",
+        "creditLinks": [null, null]
+    },
+    {
+        "id": "FormatNumbers",
+        "title": "FormatNumbers",
+        "description": "Formats numbers into a more readable format.",
+        "image": "images/FormatNumbers.png",
+        "backgroundColor": "#419873",
+        "borderColor": "#277B58",
+        "hoverColor": "#5DC895",
+        "download": "files/FormatNumbers.js",
+        "credit": "DogeisCut",
+        "creditLinks": ["https://github.com/DogeisCut", null]
+    },
+    {
+        "id": "Parasite",
+        "title": "Parasite",
+        "description": "Enables the releasing of sprites.",
+        "image": "images/Parasite.png",
+        "backgroundColor": "#C53131",
+        "borderColor": "#B22224",
+        "hoverColor": "#E55557",
+        "download": "files/Parasite.js",
+        "credit": "Dillon",
+        "creditLinks": [null]
+    },
+    {
+        "id": "WorldData",
+        "title": "WorldData",
+        "description": "Provides global data like population and capital cities.",
+        "image": "images/WorldData.png",
+        "backgroundColor": "#32479A",
+        "borderColor": "#273C8E",
+        "hoverColor": "#5566CC",
+        "download": "files/WorldData.js",
+        "credit": "Dillon",
+        "creditLinks": [null]
+    },
+    {
+        "id": "penguinpeer",
+        "title": "PenguinPeer",
+        "description": "Enables peer-to-peer communication.",
+        "image": "images/PenguinPeer.png",
+        "backgroundColor": "#4a90e2",
+        "borderColor": "#357ebd",
+        "hoverColor": "#5ab4ff",
+        "download": "files/PenguinPeer.js",
+        "credit": "Dillon",
+        "creditLinks": [null]
+    },
+    {
+        "id": "reorder",
+        "title": "ReOrder",
+        "description": "Allows users to reorder categories in the extension menu.",
+        "image": "images/ReOrder.png",
+        "backgroundColor": "#374799",
+        "borderColor": "#2C3E75",
+        "hoverColor": "#5767B9",
+        "download": "files/ReOrder.js",
+        "credit": "Dillon",
+        "creditLinks": [null]
+    },
+    {
+        "id": "Flashbang",
+        "title": "Flashbang",
+        "description": "Creates a flashbang effect on the screen.",
+        "image": "images/Flashbang.png",
+        "backgroundColor": "#2A4A41",
+        "borderColor": "#273F38",
+        "hoverColor": "#4A6A61",
+        "download": "files/Flashbang.js",
+        "credit": "Dillon, Anzuku",
+        "creditLinks": [null, null]
+    }
+]
