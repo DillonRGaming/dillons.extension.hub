@@ -16,8 +16,28 @@
         this.currentUtteranceFinalized = true;
         this.blankingTimeoutId = null;
         this.previousDetectedWord = '';
+
+        this._audioContext = null;
+        this._analyser = null;
+        this._microphone = null;
+        this.loudness = 0;
   
         this._initRecognition();
+        this._setupAudio();
+      }
+
+      _setupAudio() {
+        try {
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            this._audioContext = new AudioContext();
+            this._analyser = this._audioContext.createAnalyser();
+            this._analyser.fftSize = 2048;
+            const bufferLength = this._analyser.frequencyBinCount;
+            this._dataArray = new Uint8Array(bufferLength);
+        } catch (e) {
+            console.warn('Web Audio API is not supported in this browser.');
+            return;
+        }
       }
   
       _initRecognition() {
@@ -89,6 +109,17 @@
             clearTimeout(this.blankingTimeoutId);
             this.blankingTimeoutId = null;
           }
+
+          if (this._audioContext) {
+            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+              .then((stream) => {
+                this._microphone = this._audioContext.createMediaStreamSource(stream);
+                this._microphone.connect(this._analyser);
+              })
+              .catch((err) => {
+                console.error('Error getting microphone permission:', err);
+              });
+          }
         };
   
         this._recognition.onend = () => {
@@ -97,6 +128,10 @@
           if (this.blankingTimeoutId) {
             clearTimeout(this.blankingTimeoutId);
             this.blankingTimeoutId = null;
+          }
+          if (this._microphone) {
+            this._microphone.disconnect();
+            this._microphone = null;
           }
         };
       }
@@ -147,6 +182,17 @@
       getIsListeningState() {
         return this.isListening;
       }
+
+      getLoudness() {
+        if (!this._analyser || !this._dataArray) return 0;
+        this._analyser.getByteFrequencyData(this._dataArray);
+        let sum = 0;
+        for (let i = 0; i < this._dataArray.length; i++) {
+          sum += this._dataArray[i];
+        }
+        this.loudness = sum / this._dataArray.length;
+        return Math.round(this.loudness * 10) / 10;
+      }
   
       getInfo() {
         return {
@@ -171,12 +217,20 @@
             {
               opcode: "getLastWord",
               blockType: Scratch.BlockType.REPORTER,
+              blockShape: Scratch.BlockShape.LEAF,
               text: "last spoken word",
             },
             {
               opcode: "getFullTranscript",
               blockType: Scratch.BlockType.REPORTER,
+              blockShape: Scratch.BlockShape.LEAF,
               text: "full transcript",
+            },
+            {
+              opcode: "getLoudness",
+              blockType: Scratch.BlockType.REPORTER,
+              blockShape: Scratch.BlockShape.LEAF,
+              text: "loudness",
             },
             {
               opcode: "getIsListeningState",

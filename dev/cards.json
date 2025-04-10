@@ -1,0 +1,14 @@
+[
+    {
+        "id": "GeminiGo",
+        "title": "GeminiGo",
+        "description": "Integrates with Google Gemini.",
+        "image": "images/GeminiGo.png",
+        "backgroundColor": "#333333",
+        "borderColor": "#222222",
+        "hoverColor": "#555555",
+        "download": "files/GeminiGo.js",
+        "credit": "Dillon, 𝓴𝓲𝓼𝓾𝓾",
+        "creditLinks": [null, null]
+    }
+]
