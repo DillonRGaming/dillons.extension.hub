@@ -64,26 +64,29 @@
       darknessDiv.style.transition = `opacity ${durationSeconds}s ease-in-out, opacity ${darknessDurationSeconds}s ease-in-out ${durationSeconds}s`;
       darknessDiv.style.pointerEvents = 'none';
 
-
-      document.body.appendChild(darknessDiv);
-      document.body.appendChild(flashDiv);
-
-
-      darknessDiv.offsetHeight;
-      flashDiv.offsetHeight;
+      const audio = new Audio('https://kisuu-sounds.vercel.app/flashbang.mp3');
+      audio.play();
 
       setTimeout(() => {
-        flashDiv.style.opacity = '0';
-        darknessDiv.style.opacity = '0.7';
-      }, 10);
+        document.body.appendChild(darknessDiv);
+        document.body.appendChild(flashDiv);
 
-      setTimeout(() => {
-        darknessDiv.style.opacity = '0';
+        darknessDiv.offsetHeight;
+        flashDiv.offsetHeight;
+
         setTimeout(() => {
-          document.body.removeChild(flashDiv);
-          document.body.removeChild(darknessDiv);
-        }, darknessDurationMs);
-      }, durationMs + 10);
+          flashDiv.style.opacity = '0';
+          darknessDiv.style.opacity = '0.7';
+        }, 10);
+
+        setTimeout(() => {
+          darknessDiv.style.opacity = '0';
+          setTimeout(() => {
+            document.body.removeChild(flashDiv);
+            document.body.removeChild(darknessDiv);
+          }, darknessDurationMs);
+        }, durationMs + 10);
+      }, 300);
     }
   }
 
