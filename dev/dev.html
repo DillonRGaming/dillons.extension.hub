@@ -782,13 +782,7 @@
             descTextEl.textContent = card.description || 'No description';
             cardEl.append(titleEl, imgEl, descTextEl, descBtn);
             if (card.credit) cardEl.appendChild(creditEl);
-            const badgesCont = el('div', 'badges-container', {});
-            [].concat(card.badge || []).forEach(badge => badgesCont.appendChild(createBadgeEl(badge)));
-            if ([].concat(card.badge || []).includes('removed')) {
-                cardEl.classList.add('removed');
-                cardEl.setAttribute('aria-label', `${card.title}. Not available.`);
-            }
-            cardEl.appendChild(badgesCont);
+            
             grid.appendChild(cardEl);
             addCardStyle(card);
             setupCardEvents(cardEl, descBtn, descTextEl, card);
