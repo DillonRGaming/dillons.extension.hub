@@ -26,6 +26,7 @@
         return parts.length;
       }
 
+
       getInfo() {
         return {
           id: 'splitstring',
@@ -36,6 +37,7 @@
             {
               opcode: 'splitString',
               blockType: Scratch.BlockType.REPORTER,
+              blockShape: Scratch.BlockShape.LEAF,
               text: 'item [ITEM] of [TEXT] split by [SEPARATOR]',
               arguments: {
                 ITEM: {
@@ -55,6 +57,7 @@
             {
               opcode: 'countParts',
               blockType: Scratch.BlockType.REPORTER,
+              blockShape: Scratch.BlockShape.LEAF,
               text: 'count of parts in [TEXT] split by [SEPARATOR]',
               arguments: {
                 TEXT: {
