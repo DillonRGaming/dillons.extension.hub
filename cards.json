@@ -8,7 +8,7 @@
         "borderColor": "#222222",
         "hoverColor": "#555555",
         "download": "files/Gemini.js",
-        "credit": "Dillon, 𝓴𝓲𝓼𝓾𝓾",
+        "credit": "Dillon, 𝓴𝓲𝓼uu",
         "creditLinks": [null, null]
     },
     {
@@ -132,18 +132,6 @@
         "creditLinks": [null]
     },
     {
-        "id": "ddededodediamante",
-        "title": "Ddededodediamante",
-        "description": "ddededodediamante",
-        "image": "images/ddededodediamante.png",
-        "backgroundColor": "#eb459f",
-        "borderColor": "#D94595",
-        "hoverColor": "#F573B5",
-        "download": "files/ddededodediamante.js",
-        "credit": "ddededodediamante",
-        "creditLinks": []
-    },
-    {
         "id": "FormatCurrency",
         "title": "FormatCurrency",
         "description": "Formats one currency to another.",
@@ -155,5 +143,18 @@
         "credit": "Dillon",
         "creditLinks": [null],
         "badges": ["new"]
+    },
+    {
+        "id": "File",
+        "title": "File",
+        "description": "Allows file creation and manipulation.",
+        "image": "images/File.png",
+        "backgroundColor": "#FCA03D",
+        "borderColor": "#C08030",
+        "hoverColor": "#FFB451",
+        "download": "files/File.js",
+        "credit": "Dillon",
+        "creditLinks": [null],
+        "badges": ["updated"]
     }
 ]
