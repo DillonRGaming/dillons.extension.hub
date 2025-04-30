@@ -156,5 +156,17 @@
         "credit": "Dillon",
         "creditLinks": [null],
         "badges": ["updated"]
+    },
+    {
+        "id": "timerplus",
+        "title": "TimerPlus",
+        "description": "Provides advanced timer blocks.",
+        "image": "images/TimerPlus.png",
+        "backgroundColor": "#5865F2",
+        "borderColor": "#4651D0",
+        "hoverColor": "#7788EE",
+        "download": "files/TimerPlus.js",
+        "credit": "Dillon",
+        "creditLinks": [null]
     }
 ]

@@ -44,7 +44,6 @@
                     resolve(file);
                 };
                 reader.onerror = (e) => {
-                    // We no longer have a block to report the error, but we can still log it.
                     console.error(`Error reading file: ${reader.error}`);
                     lastOpenedFileInfo.readSuccess = false;
                     lastOpenedFileInfo.isReading = false;

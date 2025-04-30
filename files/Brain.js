@@ -1,20 +1,9 @@
-// Name: SimpleBrain Extension (Markov Chain Generator)
-// ID: simplebrainmkv
-// Description: Learns character sequences from examples and attempts to generate text. Not real AI!
-// By: Your Name Here <--- Modify this
-// License: MIT
-
 (function(Scratch) {
     'use strict';
   
-    // if (!Scratch.extensions.unsandboxed) {
-    //   throw new Error("SimpleBrain (Markov) might need unsandboxed mode for performance.");
-    // }
-  
     const Cast = Scratch.Cast;
-    const defaultOrder = 3; // Default Markov chain order
+    const defaultOrder = 3;
   
-    // --- Helper: Weighted Random Choice ---
     function weightedRandomChoice(choices) {
         const totalWeight = Object.values(choices).reduce((sum, weight) => sum + weight, 0);
         if (totalWeight <= 0) return null;
@@ -27,32 +16,27 @@
         }
         return Object.keys(choices)[0] || null;
     }
-    // --- End Helper ---
   
-    class SimpleBrainMarkov {
+    class SimpleBrain {
       constructor() {
         this.brains = new Map();
       }
   
       _getBrainData(brainName, createIfNeeded = false, order = defaultOrder) {
           brainName = Cast.toString(brainName).trim();
-          if (!brainName && !createIfNeeded) return null; // Cannot get non-existent empty name brain
-          if (!brainName && createIfNeeded) brainName = 'DefaultBrain'; // Avoid creating brain named ""
+          if (!brainName && !createIfNeeded) return null;
+          if (!brainName && createIfNeeded) brainName = 'DefaultBrain';
   
           if (!this.brains.has(brainName) && createIfNeeded) {
-               // CORRECTED: Use Cast.toNumber and Math functions
                const safeOrder = Math.max(1, Math.round(Cast.toNumber(order)));
-               console.log(`SimpleBrainMKV: Creating new brain "${brainName}" with order ${safeOrder}`);
                this.brains.set(brainName, {
                    order: safeOrder,
                    transitions: new Map(),
                    learnedOutputs: []
                });
-               // Trigger menu refresh *after* adding (though this is hard to guarantee)
-               Scratch.vm.emitWorkspaceUpdate(); // Attempt to trigger UI updates
+               Scratch.vm.emitWorkspaceUpdate();
           } else if (this.brains.has(brainName) && createIfNeeded) {
                const brain = this.brains.get(brainName);
-               // CORRECTED: Ensure order is valid number on retrieval/creation check
                if (!brain.order) brain.order = Math.max(1, Math.round(Cast.toNumber(order)));
                if (!brain.transitions) brain.transitions = new Map();
                if (!brain.learnedOutputs) brain.learnedOutputs = [];
@@ -96,10 +80,9 @@
       }
   
       getInfo() {
-        // ... (getInfo remains the same as the previous version, just ensure Cast.toInteger is not used inside any argument defaults if you modify it)
         return {
-          id: 'simplebrainmkv',
-          name: 'Simple Brain (Gen)',
+          id: 'simplebrain',
+          name: 'SimpleBrain',
           color1: '#D8BFD8',
           color2: '#C4AEC4',
           blocks: [
@@ -121,7 +104,6 @@
         };
       }
   
-      // --- Menu Function ---
       _getBrainNames() {
         const brainNames = Array.from(this.brains.keys());
         if (brainNames.length === 0) {
@@ -131,18 +113,15 @@
         return brainNames.map(name => ({ text: name, value: name }));
       }
   
-      // --- Block Implementations ---
-  
       createBrain(args) {
-          // Use helper which now handles order conversion correctly
           this._getBrainData(args.NAME, true, args.ORDER);
       }
   
       deleteBrain(args) {
          const brainName = Cast.toString(args.BRAIN_NAME);
-         if (!brainName) return; // Don't delete empty name
+         if (!brainName) return;
          this.brains.delete(brainName);
-         Scratch.vm.emitWorkspaceUpdate(); // Attempt to trigger UI updates
+         Scratch.vm.emitWorkspaceUpdate();
       }
   
       brainExists(args) {
@@ -153,9 +132,7 @@
       learnOutput(args) {
           const brainName = Cast.toString(args.BRAIN_NAME);
           const outputText = Cast.toString(args.OUTPUT);
-          // CORRECTED: Add check for empty brain name
           if (!brainName) {
-               console.warn(`SimpleBrainMKV: No brain selected for learnOutput.`);
                return;
           }
           const brainData = this._getBrainData(brainName);
@@ -164,28 +141,24 @@
               brainData.learnedOutputs.push(outputText);
               this._trainOnOutput(brainData, outputText);
           } else {
-               console.warn(`SimpleBrainMKV: Brain "${brainName}" not found for learnOutput.`);
           }
       }
   
       learnBulkOutputs(args) {
-          const brainName = Cast.toString(args.BRAIN_NAME);
+          const brainName = Cast.toString(args.BRAN_NAME);
           const dataString = Cast.toString(args.DATA_STRING);
-          // CORRECTED: Add check for empty brain name
           if (!brainName) {
-               console.warn(`SimpleBrainMKV: No brain selected for learnBulkOutputs.`);
                return;
           }
           const brainData = this._getBrainData(brainName);
   
           if (!brainData) {
-               console.warn(`SimpleBrainMKV: Brain "${brainName}" not found for learnBulkOutputs.`);
                return;
           }
           let parsedData;
           try { parsedData = JSON.parse(dataString); }
-          catch (e) { console.error("SimpleBrainMKV: Invalid JSON provided to learnBulkOutputs.", e); return; }
-          if (!Array.isArray(parsedData)) { console.error("SimpleBrainMKV: Bulk data must be a JSON array."); return; }
+          catch (e) { return; }
+          if (!Array.isArray(parsedData)) { return; }
   
           let addedCount = 0;
           for (const item of parsedData) {
@@ -196,17 +169,14 @@
                    brainData.learnedOutputs.push(outputText);
                    this._trainOnOutput(brainData, outputText);
                    addedCount++;
-              } else { console.warn("SimpleBrainMKV: Skipping invalid item in bulk outputs:", item); }
+              } else { }
           }
-          // console.log(`SimpleBrainMKV: Learned from ${addedCount} outputs for brain "${brainName}".`);
       }
   
       generateResponse(args) {
           const brainName = Cast.toString(args.BRAIN_NAME);
           const prompt = Cast.toString(args.PROMPT);
-          // CORRECTED: Use Cast.toNumber and Math functions
           const maxLength = Math.max(1, Math.round(Cast.toNumber(args.LENGTH)));
-          // CORRECTED: Add check for empty brain name
           if (!brainName) return `(No brain selected)`;
   
           const brainData = this._getBrainData(brainName);
@@ -217,14 +187,12 @@
   
       clearBrainData(args) {
         const brainName = Cast.toString(args.BRAIN_NAME);
-        // CORRECTED: Add check for empty brain name
         if (!brainName) return;
         const brainData = this._getBrainData(brainName);
         if (brainData) {
           brainData.transitions.clear();
           brainData.learnedOutputs = [];
         } else {
-           console.warn(`SimpleBrainMKV: Brain "${brainName}" not found for clearBrainData.`);
         }
       }
   
@@ -234,7 +202,7 @@
           const brainData = this._getBrainData(brainName);
           if (brainData && brainData.learnedOutputs) {
               try { return JSON.stringify(brainData.learnedOutputs, null, 2); }
-              catch (e) { console.error("SimpleBrainMKV: Error stringifying learned outputs", e); return '{"error": "Could not stringify data"}'; }
+              catch (e) { return '{"error": "Could not stringify data"}'; }
           }
           return '[]';
       }
@@ -253,7 +221,7 @@
            return brainData ? brainData.order : 0;
       }
   
-    } // End of Class
+    }
   
-    Scratch.extensions.register(new SimpleBrainMarkov());
+    Scratch.extensions.register(new SimpleBrain());
   })(Scratch);
