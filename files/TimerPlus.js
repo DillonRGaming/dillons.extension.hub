@@ -2,7 +2,6 @@
   'use strict';
 
   const svgIcon = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTMxIiBoZWlnaHQ9IjkzMSIgdmlld0JveD0iMCAwIDkzMSA5MzEiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjQ2NS41IiBjeT0iNDY1LjUiIHI9IjQ2NS41IiBmaWxsPSIjNTg2NUYyIi8+CjxjaXJjbGUgY3g9IjQ2My4yNDIiIGN5PSI1MjEuNDE5IiByPSIyNTUuNzQyIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjY1Ii8+CjxyZWN0IHg9IjQwNi40ODMiIHk9IjE3NS4zMDciIHdpZHRoPSIxMTMuNTE2IiBoZWlnaHQ9IjEwMC4xNjEiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjM2OC42NDUiIHk9IjEyMyIgd2lkdGg9IjE4OS4xOTMiIGhlaWdodD0iNjIuMzIyNiIgcng9IjE0IiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSI2NzMuODk2IiB5PSIyNzUuNDI4IiB3aWR0aD0iNTkuNzE4NCIgaGVpZ2h0PSI3Ny40NDczIiB0cmFuc2Zvcm09InJvdGF0ZSg0Ny40Njk5IDY3My44OTYgMjc1LjQyOCkiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjY4OS41ODgiIHk9IjIzMy4xNzciIHdpZHRoPSIxMDAuNzc1IiBoZWlnaHQ9IjQ4LjUyMTIiIHJ4PSIxNCIgdHJhbnNmb3JtPSJyb3RhdGUoNDcuNDY5OSA2ODkuNTg4IDIzMy4xNzcpIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB3aWR0aD0iNTkuNzE4NCIgaGVpZ2h0PSI3Ny40NDczIiB0cmFuc2Zvcm09Im1hdHJpeCgtMC42NzU5NzcgMC43MzY5MjMgMC43MzY5MjMgMC42NzU5NzcgMjU4LjgxNCAyNTkuODQ3KSIgZmlsbD0id2hpdGUiLz4KPHJlY3Qgd2lkdGg9IjEwMC43NzUiIGhlaWdodD0iNDguNTIxMiIgcng9IjE0IiB0cmFuc2Zvcm09Im1hdHJpeCgtMC42NzU5NzcgMC43MzY5MjMgMC43MzY5MjMgMC42NzU5NzcgMjQzLjEyMyAyMTcuNTk4KSIgZmlsbD0id2hpdGUiLz4KPGNpcmNsZSBjeD0iNDYzLjI0MyIgY3k9IjUyMS40MTkiIHI9IjY5IiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSI0MjkuODU0IiB5PSI1MDIuNDk5IiB3aWR0aD0iMjEzLjY3NyIgaGVpZ2h0PSIzNi43MjU4IiByeD0iMTguMzYyOSIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==";
-
   const Cast = Scratch.Cast;
 
   class TimerPlusExtension {
@@ -31,6 +30,21 @@
             }
           },
           {
+            opcode: 'createTimerWithTime',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'create timer [NAME] with time [SECONDS]',
+            arguments: {
+              NAME: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: 'my timer'
+              },
+              SECONDS: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0
+              }
+            }
+          },
+          {
             opcode: 'startTimer',
             blockType: Scratch.BlockType.COMMAND,
             text: 'start timer [NAME]',
@@ -55,18 +69,6 @@
             }
           },
           {
-            opcode: 'resumeTimer',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'resume timer [NAME]',
-            arguments: {
-              NAME: {
-                type: Scratch.ArgumentType.STRING,
-                menu: 'timerNames',
-                defaultValue: 'my timer'
-              }
-            }
-          },
-          {
             opcode: 'deleteTimer',
             blockType: Scratch.BlockType.COMMAND,
             text: 'delete timer [NAME]',
@@ -79,9 +81,15 @@
             }
           },
           {
+            opcode: 'deleteAllTimers',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'delete all timers',
+            arguments: {}
+          },
+          {
             opcode: 'addTime',
             blockType: Scratch.BlockType.COMMAND,
-            text: 'change [NAME] by [SECONDS] seconds',
+            text: 'change timer [NAME] by [SECONDS] seconds',
             arguments: {
               SECONDS: {
                 type: Scratch.ArgumentType.NUMBER,
@@ -123,11 +131,16 @@
             }
           },
           {
+            opcode: 'resetAllTimers',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'reset all timers',
+            arguments: {}
+          },
+          {
             opcode: 'getTimerTime',
             blockType: Scratch.BlockType.REPORTER,
             blockShape: Scratch.BlockShape.LEAF,
             text: 'time of timer [NAME]',
-            disableMonitor: false,
             arguments: {
               NAME: {
                 type: Scratch.ArgumentType.STRING,
@@ -149,11 +162,28 @@
             }
           },
           {
+            opcode: 'timerExists',
+            blockType: Scratch.BlockType.BOOLEAN,
+            text: 'timer [NAME] exists?',
+            arguments: {
+              NAME: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: 'my timer'
+              }
+            }
+          },
+          {
             opcode: 'listTimers',
             blockType: Scratch.BlockType.REPORTER,
             blockShape: Scratch.BlockShape.LEAF,
             text: 'list of timers',
-            disableMonitor: false,
+            arguments: {}
+          },
+          {
+            opcode: 'getNumberOfTimers',
+            blockType: Scratch.BlockType.REPORTER,
+            blockShape: Scratch.BlockShape.LEAF,
+            text: 'number of timers',
             arguments: {}
           }
         ],
@@ -180,12 +210,38 @@
       if (!name || name.trim() === '') {
           return;
       }
-      this.timers[name] = {
-        elapsedTime: 0,
-        startTime: null,
-        isRunning: false
-      };
+      if (!this.timers[name]) {
+        this.timers[name] = {
+          elapsedTime: 0,
+          startTime: null,
+          isRunning: false
+        };
+      }
     }
+
+    createTimerWithTime(args) {
+      const name = Cast.toString(args.NAME);
+      const secondsToSet = Cast.toNumber(args.SECONDS);
+      if (!name || name.trim() === '') {
+          return;
+      }
+      const msToSet = Math.max(0, secondsToSet * 1000);
+      if (!this.timers[name]) {
+        this.timers[name] = {
+          elapsedTime: msToSet,
+          startTime: null,
+          isRunning: false
+        };
+      } else {
+        this.timers[name].elapsedTime = msToSet;
+        if (this.timers[name].isRunning) {
+            this.timers[name].startTime = Date.now() - this.timers[name].elapsedTime;
+        } else {
+            this.timers[name].startTime = null;
+        }
+      }
+    }
+
 
     startTimer(args) {
       const name = Cast.toString(args.NAME);
@@ -206,14 +262,14 @@
       }
     }
 
-    resumeTimer(args) {
-        this.startTimer(args);
-    }
-
 
     deleteTimer(args) {
       const name = Cast.toString(args.NAME);
       delete this.timers[name];
+    }
+
+    deleteAllTimers() {
+        this.timers = {};
     }
 
     addTime(args) {
@@ -226,6 +282,14 @@
         timer.elapsedTime += msToAdd;
         if (timer.isRunning) {
           timer.startTime -= msToAdd;
+        }
+        if (timer.elapsedTime < 0) {
+            timer.elapsedTime = 0;
+            if (timer.isRunning) {
+                timer.startTime = Date.now();
+            } else {
+                timer.startTime = null;
+            }
         }
       }
     }
@@ -240,6 +304,8 @@
             timer.elapsedTime = msToSet;
             if (timer.isRunning) {
                 timer.startTime = Date.now() - timer.elapsedTime;
+            } else {
+                timer.startTime = null;
             }
         }
     }
@@ -251,6 +317,16 @@
             timer.elapsedTime = 0;
             timer.startTime = null;
             timer.isRunning = false;
+        }
+    }
+
+    resetAllTimers() {
+        for (const name in this.timers) {
+            if (Object.hasOwnProperty.call(this.timers, name)) {
+                this.timers[name].elapsedTime = 0;
+                this.timers[name].startTime = null;
+                this.timers[name].isRunning = false;
+            }
         }
     }
 
@@ -267,8 +343,9 @@
         currentElapsed += Date.now() - timer.startTime;
       }
 
-      return currentElapsed / 1000;
+      return Math.round(currentElapsed) / 1000;
     }
+
 
     timerIsRunning(args) {
         const name = Cast.toString(args.NAME);
@@ -276,8 +353,17 @@
         return timer ? timer.isRunning : false;
     }
 
+    timerExists(args) {
+        const name = Cast.toString(args.NAME);
+        return Object.hasOwnProperty.call(this.timers, name);
+    }
+
     listTimers() {
         return Object.keys(this.timers).join(',');
+    }
+
+    getNumberOfTimers() {
+        return Object.keys(this.timers).length;
     }
   }
 
