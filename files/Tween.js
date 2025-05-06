@@ -1,6 +1,8 @@
 (function(Scratch) {
   'use strict';
 
+  const menuIconURI = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTMxIiBoZWlnaHQ9Ijk1NCIgdmlld0JveD0iMCAwIDkzMSA5NTQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjQ2NS41IiBjeT0iNDY1LjUiIHI9IjQ2NS41IiBmaWxsPSIjMzE1NjUxIi8+CjxwYXRoIGQ9Ik0xOTMgMzc2TDI1Mi4wMzQgNTAxLjIxN0MzMzcuMTIyIDY4MS42OTggNTkzLjg3OCA2ODEuNjk4IDY3OC45NjYgNTAxLjIxN0w3MzggMzc2IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjExMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPgo=';
+
   const easing = {
     linear: (t) => t,
 
@@ -70,8 +72,10 @@
       return {
         id: 'tween',
         name: 'Tween',
-        color1: '#0B5E55',
-        color2: '#4D94CC',
+        menuIconURI: menuIconURI,
+        blockIconURI: menuIconURI,
+        color1: '#315651',
+        color2: '#284843',
         blocks: [
           {
             opcode: 'createTween',

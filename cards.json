@@ -168,5 +168,17 @@
         "download": "files/TimerPlus.js",
         "credit": "Dillon",
         "creditLinks": [null]
+    },
+    {
+        "id": "tween",
+        "title": "Tween",
+        "description": "Provides blocks for creating smooth transitions between values.",
+        "image": "images/Tween.png",
+        "backgroundColor": "#315651",
+        "borderColor": "#284843",
+        "hoverColor": "#416661",
+        "download": "files/Tween.js",
+        "credit": "Dillon",
+        "creditLinks": [null]
     }
 ]
